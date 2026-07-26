@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockBridge · Multi-Page</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            background: #0f1a24;
+            background-image: 
+                radial-gradient(ellipse at 20% 50%, rgba(30, 60, 90, 0.4) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(20, 50, 80, 0.3) 0%, transparent 60%),
+                linear-gradient(180deg, #0f1a24 0%, #16232e 40%, #0f1a24 100%);
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        /* Subtle decorative elements - very subtle */
+        body::before {
+            content: "";
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(100, 180, 255, 0.02) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(100, 200, 180, 0.015) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container {
+            max-width: 1500px;
+            width: 100%;
+            background: rgba(18, 30, 42, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 32px;
+            padding: 28px 32px 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.04);
+            position: relative;
+            z-index: 1;
+        }
+        /* Navigation */
+        .nav-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 10px 16px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 48px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .nav-bar .brand {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #8ab4d0;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.2px;
+        }
+        .nav-bar .brand span {
+            color: #c8dce8;
+        }
+        .nav-bar .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            flex: 1;
+        }
+        .nav-bar .nav-links button {
+            background: transparent;
+            border: none;
+            padding: 7px 16px;
+            border-radius: 32px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            color: #6a8ca0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .nav-bar .nav-links button:hover {
+            background: rgba(255,255,255,0.04);
+            color: #b0ccdc;
+        }
+        .nav-bar .nav-links button.active {
+            background: rgba(100, 180, 255, 0.08);
+            color: #8ab4d0;
+            border: 1px solid rgba(100, 180, 255, 0.08);
+        }
+        .nav-bar .nav-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+        .nav-bar .nav-actions button {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.04);
+            padding: 7px 14px;
+            border-radius: 32px;
+            font-weight: 500;
+            font-size: 0.75rem;
+            color: #8ab4d0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .nav-bar .nav-actions button:hover {
+            background: rgba(255,255,255,0.07);
+            color: #b0ccdc;
+        }
+        .nav-bar .page-indicator {
+            color: #4a6a7e;
+            font-size: 0.7rem;
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 500;
+            margin: 0 0 4px 0;
+            color: #c8dce8;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            letter-spacing: -0.3px;
+        }
+        h1 .gold {
+            color: #b8c8d4;
+            font-weight: 400;
+        }
+        .subhead {
+            color: #5a7d92;
+            font-weight: 400;
+            font-size: 0.85rem;
+            margin-bottom: 24px;
+            border-left: 3px solid rgba(100, 180, 255, 0.15);
+            padding-left: 14px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 0 8px 8px 0;
+        }
+        .badge {
+            background: rgba(255,255,255,0.04);
+            color: #8ab4d0;
+            border-radius: 32px;
+            padding: 0 14px;
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            line-height: 1.8;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 12px 0;
+            padding: 5px 0 5px 12px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 32px;
+            border-left: 3px solid rgba(100, 180, 255, 0.12);
+        }
+        .section-header h2 {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #b0ccdc;
+            margin: 0;
+            letter-spacing: -0.2px;
+        }
+        .section-header span {
+            background: rgba(255,255,255,0.03);
+            color: #5a7d92;
+            padding: 0 12px;
+            border-radius: 24px;
+            font-size: 0.6rem;
+            font-weight: 500;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+        .stock-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin: 0 0 14px 0;
+            max-height: 520px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .stock-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .stock-list::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+        }
+        .stock-list::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.06);
+            border-radius: 8px;
+        }
+        .stock-entry {
+            background: rgba(255,255,255,0.02);
+            border-radius: 20px;
+            padding: 14px 16px 16px;
+            border: 1px solid rgba(255,255,255,0.04);
+            transition: all 0.2s ease;
+        }
+        .stock-entry:hover {
+            border-color: rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.03);
+        }
+        .stock-entry .input-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 8px 14px;
+        }
+        .stock-entry .field {
+            flex: 1 0 85px;
+            min-width: 65px;
+        }
+        .stock-entry .field label {
+            display: block;
+            font-size: 0.5rem;
+            font-weight: 500;
+            color: #5a7d92;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 2px;
+        }
+        .stock-entry .field .value {
+            display: flex;
+            align-items: center;
+            background: rgba(0,0,0,0.25);
+            border-radius: 24px;
+            padding: 0 12px;
+            border: 1px solid rgba(255,255,255,0.03);
+            transition: all 0.2s ease;
+        }
+        .stock-entry .field .value:focus-within {
+            border-color: rgba(100, 180, 255, 0.15);
+            box-shadow: 0 0 0 3px rgba(100, 180, 255, 0.04);
+        }
+        .stock-entry .field .value input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            padding: 7px 0 7px 4px;
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: #c8dce8;
+            outline: none;
+        }
+        .stock-entry .field .value input::placeholder {
+            color: rgba(255,255,255,0.08);
+        }
+        .stock-entry .field .value .currency {
+            font-weight: 400;
+            color: #5a7d92;
+            font-size: 0.7rem;
+            white-space: nowrap;
+        }
+        .stock-entry .remove-btn {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 32px;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #5a7d92;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: auto;
+            align-self: center;
+            height: 32px;
+        }
+        .stock-entry .remove-btn:hover {
+            background: rgba(255,70,70,0.05);
+            border-color: rgba(255,70,70,0.1);
+            color: #8a7a7a;
+        }
+        .stock-breakdown {
+            margin-top: 10px;
+            padding: 8px 12px 8px;
+            background: rgba(0,0,0,0.15);
+            border-radius: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 16px;
+            border: 1px solid rgba(255,255,255,0.02);
+            font-size: 0.8rem;
+        }
+        .stock-breakdown .bd-item {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+        .stock-breakdown .bd-label {
+            font-size: 0.55rem;
+            font-weight: 500;
+            color: #4a6a7e;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .stock-breakdown .bd-value {
+            font-weight: 400;
+            color: #b0ccdc;
+        }
+        .bd-profit {
+            color: #6a9a8a !important;
+        }
+        .bd-loss {
+            color: #9a6a6a !important;
+        }
+
+        .action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 4px 0 12px;
+        }
+        .action-row button {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.04);
+            padding: 7px 18px;
+            border-radius: 32px;
+            font-weight: 500;
+            font-size: 0.78rem;
+            color: #6a8ca0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .action-row button:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.06);
+            color: #b0ccdc;
+        }
+        .action-row button.primary {
+            background: rgba(100, 180, 255, 0.06);
+            border-color: rgba(100, 180, 255, 0.08);
+            color: #8ab4d0;
+        }
+        .action-row button.primary:hover {
+            background: rgba(100, 180, 255, 0.08);
+            border-color: rgba(100, 180, 255, 0.12);
+            color: #b0ccdc;
+        }
+        .result-panel {
+            background: rgba(0,0,0,0.2);
+            border-radius: 24px;
+            padding: 14px 18px 14px;
+            border: 1px solid rgba(255,255,255,0.02);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 6px 12px;
+            margin-top: 4px;
+        }
+        .result-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .result-item .label {
+            font-size: 0.55rem;
+            font-weight: 500;
+            color: #4a6a7e;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .result-item .number {
+            font-weight: 500;
+            font-size: 1rem;
+            color: #c8dce8;
+        }
+        .highlight-profit {
+            color: #6a9a8a !important;
+        }
+        .highlight-loss {
+            color: #9a6a6a !important;
+        }
+        .tax-tag {
+            background: rgba(255,255,255,0.02);
+            padding: 2px 12px;
+            border-radius: 24px;
+            font-size: 0.55rem;
+            color: #5a7d92;
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+        .footnote {
+            font-size: 0.6rem;
+            color: #3a5a6e;
+            text-align: center;
+            margin-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.02);
+            padding-top: 14px;
+        }
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+            }
+            .nav-bar .nav-actions {
+                margin-left: 0;
+            }
+        }
+        @media (max-width: 700px) {
+            .stock-entry .input-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .stock-entry .remove-btn {
+                align-self: flex-end;
+                margin-top: 4px;
+            }
+            .result-panel {
+                grid-template-columns: 1fr 1fr;
+            }
+            .stock-breakdown {
+                flex-direction: column;
+                gap: 4px;
+            }
+            .app-container {
+                padding: 16px;
+            }
+        }
+        .stock-entry .field .value input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .stock-entry .field .value input::-webkit-outer-spin-button,
+        .stock-entry .field .value input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+        .stock-name-field .value {
+            background: rgba(255,255,255,0.02);
+        }
+        .stock-name-field .value input {
+            font-weight: 400;
+        }
+
+        /* Comparison section - matches portfolio styles */
+        .comparison-section {
+            background: transparent;
+            border-radius: 0;
+            padding: 0;
+            border: none;
+            box-shadow: none;
+            max-height: none;
+            overflow-y: visible;
+        }
+        .comparison-item {
+            background: rgba(255,255,255,0.02);
+            border-radius: 20px;
+            padding: 14px 16px 16px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(255,255,255,0.04);
+            transition: all 0.2s ease;
+        }
+        .comparison-item:hover {
+            border-color: rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.03);
+        }
+        .comparison-item:last-child {
+            margin-bottom: 0;
+        }
+        .comparison-item .comp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .comparison-item .comp-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #c8dce8;
+        }
+        .comparison-item .comp-remove {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 32px;
+            padding: 3px 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #5a7d92;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .comparison-item .comp-remove:hover {
+            background: rgba(255,70,70,0.05);
+            border-color: rgba(255,70,70,0.1);
+            color: #8a7a7a;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px 12px;
+        }
+        .comp-field {
+            display: flex;
+            flex-direction: column;
+        }
+        .comp-field .comp-label {
+            font-size: 0.5rem;
+            text-transform: uppercase;
+            color: #4a6a7e;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .comp-field .comp-input {
+            display: flex;
+            align-items: center;
+            background: rgba(0,0,0,0.25);
+            border-radius: 24px;
+            padding: 0 12px;
+            border: 1px solid rgba(255,255,255,0.03);
+            transition: all 0.2s ease;
+            margin-top: 2px;
+        }
+        .comp-field .comp-input:focus-within {
+            border-color: rgba(100, 180, 255, 0.12);
+            box-shadow: 0 0 0 3px rgba(100, 180, 255, 0.04);
+        }
+        .comp-field .comp-input input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            padding: 5px 0 5px 4px;
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: #c8dce8;
+            outline: none;
+        }
+        .comp-field .comp-input input::placeholder {
+            color: rgba(255,255,255,0.06);
+        }
+        .comp-field .comp-input .currency {
+            font-weight: 400;
+            color: #5a7d92;
+            font-size: 0.7rem;
+        }
+        .comp-field .comp-value {
+            font-weight: 400;
+            color: #b0ccdc;
+            font-size: 0.8rem;
+            margin-top: 2px;
+        }
+        .comp-field .comp-value.highlight-profit {
+            color: #6a9a8a !important;
+        }
+        .comp-field .comp-value.highlight-loss {
+            color: #9a6a6a !important;
+        }
+        .comparison-empty {
+            text-align: center;
+            color: #4a6a7e;
+            padding: 30px 20px;
+            font-size: 0.85rem;
+            background: rgba(255,255,255,0.01);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+        .comparison-empty span {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .add-comp-btn {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 32px;
+            padding: 7px 18px;
+            width: 100%;
+            font-weight: 500;
+            color: #6a8ca0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 4px;
+            font-size: 0.78rem;
+        }
+        .add-comp-btn:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.06);
+            color: #b0ccdc;
+        }
+        .comp-scenario-badge {
+            background: rgba(255,255,255,0.02);
+            color: #5a7d92;
+            padding: 2px 12px;
+            border-radius: 24px;
+            font-size: 0.55rem;
+            font-weight: 500;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+        .comp-field .comp-input input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .comp-field .comp-input input::-webkit-outer-spin-button,
+        .comp-field .comp-input input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+        .comp-result-row {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.03);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 20px;
+        }
+        .comp-result-item {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+        .comp-result-item .comp-label {
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            color: #4a6a7e;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .comp-result-item .comp-value {
+            font-weight: 400;
+            font-size: 0.85rem;
+            color: #b0ccdc;
+        }
+        .comp-result-item .comp-value.highlight-profit {
+            color: #6a9a8a !important;
+        }
+        .comp-result-item .comp-value.highlight-loss {
+            color: #9a6a6a !important;
+        }
+        .comp-portfolio-badge {
+            background: rgba(100, 180, 255, 0.04);
+            color: #6a8ca0;
+            padding: 2px 10px;
+            border-radius: 24px;
+            font-size: 0.5rem;
+            font-weight: 500;
+            border: 1px solid rgba(100, 180, 255, 0.04);
+        }
+        .comparison-list-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin: 0 0 14px 0;
+            max-height: 520px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .comparison-list-wrapper::-webkit-scrollbar {
+            width: 4px;
+        }
+        .comparison-list-wrapper::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+        }
+        .comparison-list-wrapper::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.06);
+            border-radius: 8px;
+        }
+        .comparison-result-panel {
+            background: rgba(0,0,0,0.2);
+            border-radius: 24px;
+            padding: 14px 18px 14px;
+            border: 1px solid rgba(255,255,255,0.02);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 6px 12px;
+            margin-top: 4px;
+        }
+        .comparison-result-panel .result-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .comparison-result-panel .result-item .label {
+            font-size: 0.55rem;
+            font-weight: 500;
+            color: #4a6a7e;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .comparison-result-panel .result-item .number {
+            font-weight: 500;
+            font-size: 1rem;
+            color: #c8dce8;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(15, 26, 36, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: #c8dce8;
+            padding: 14px 22px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.04);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            transform: translateY(16px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            font-size: 0.85rem;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .toast .toast-title {
+            font-weight: 500;
+            color: #8ab4d0;
+        }
+        .toast .toast-close {
+            margin-left: 14px;
+            background: none;
+            border: none;
+            color: #4a6a7e;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="toast" id="toast">
+        <span class="toast-title" id="toastTitle">✓</span>
+        <span id="toastMessage">Done</span>
+        <button class="toast-close" onclick="document.getElementById('toast').classList.remove('show')">✕</button>
+    </div>
+
+    <div class="app-container">
+        <div class="nav-bar">
+            <div class="brand">◈ <span>StockBridge</span></div>
+            <div class="nav-links" id="navLinks">
+                <button class="active" data-page="1">Portfolio 1</button>
+                <button data-page="2">Portfolio 2</button>
+                <button data-page="3">Portfolio 3</button>
+                <button data-page="4">Portfolio 4</button>
+            </div>
+            <div class="nav-actions">
+                <span class="page-indicator" id="pageIndicator">Page 1 of 4</span>
+                <button id="downloadBtn">⬇ Download</button>
+                <button id="downloadAllBtn">⬇ All</button>
+            </div>
+        </div>
+
+        <h1>
+            <span>Multi‑Stock <span class="gold">Portfolio</span></span>
+            <span class="badge" id="pageBadge">Page 1</span>
+        </h1>
+        <div class="subhead" id="pageSubhead">Portfolio · Comparison · Real‑time P&L</div>
+
+        <div id="pageContent"></div>
+
+        <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 16px;">
+            <span class="tax-tag">tax on positive P&L only</span>
+            <span class="tax-tag">FX spread included</span>
+            <span class="tax-tag">comparison syncs with portfolio</span>
+        </div>
+        <div class="footnote">Stock · Invest ₹ · Buy/Sell price ($) · Buy/Sell rate (₹/$) · Tax & charges %</div>
+    </div>
+
+    <script>
+        (function() {
+            let currentPage = 1;
+            const totalPages = 4;
+
+            let pageData = {
+                1: {
+                    stocks: [
+                        { name: 'AAPL', invest: 100000, buyPrice: 150.50, buyRate: 83.20, sellPrice: 165.80, sellRate: 84.50, tax: 0.50 },
+                        { name: 'MSFT', invest: 50000, buyPrice: 320.00, buyRate: 83.50, sellPrice: 345.00, sellRate: 84.20, tax: 0.40 },
+                        { name: 'GOOGL', invest: 75000, buyPrice: 85.25, buyRate: 82.90, sellPrice: 79.50, sellRate: 84.00, tax: 0.60 }
+                    ],
+                    extraComparisons: []
+                },
+                2: {
+                    stocks: [
+                        { name: 'TSLA', invest: 120000, buyPrice: 250.00, buyRate: 83.00, sellPrice: 280.00, sellRate: 84.50, tax: 0.55 },
+                        { name: 'AMZN', invest: 80000, buyPrice: 180.50, buyRate: 83.30, sellPrice: 195.00, sellRate: 84.10, tax: 0.45 },
+                        { name: 'NVDA', invest: 90000, buyPrice: 450.00, buyRate: 83.40, sellPrice: 520.00, sellRate: 84.30, tax: 0.50 }
+                    ],
+                    extraComparisons: []
+                },
+                3: {
+                    stocks: [
+                        { name: 'META', invest: 70000, buyPrice: 200.00, buyRate: 83.10, sellPrice: 215.00, sellRate: 84.40, tax: 0.48 },
+                        { name: 'NFLX', invest: 60000, buyPrice: 380.00, buyRate: 83.25, sellPrice: 410.00, sellRate: 84.15, tax: 0.52 },
+                        { name: 'AMD', invest: 55000, buyPrice: 120.00, buyRate: 83.00, sellPrice: 135.00, sellRate: 84.00, tax: 0.42 }
+                    ],
+                    extraComparisons: []
+                },
+                4: {
+                    stocks: [
+                        { name: 'INTC', invest: 45000, buyPrice: 45.00, buyRate: 83.00, sellPrice: 48.00, sellRate: 84.00, tax: 0.38 },
+                        { name: 'IBM', invest: 65000, buyPrice: 140.00, buyRate: 83.20, sellPrice: 155.00, sellRate: 84.30, tax: 0.44 },
+                        { name: 'ORCL', invest: 85000, buyPrice: 110.00, buyRate: 83.15, sellPrice: 125.00, sellRate: 84.20, tax: 0.46 }
+                    ],
+                    extraComparisons: []
+                }
+            };
+
+            function createStockData(name, invest, buyPrice, buyRate, sellPrice, sellRate, tax) {
+                return { name, invest, buyPrice, buyRate, sellPrice, sellRate, tax };
+            }
+
+            function formatINR(amount) {
+                return '₹' + Number(amount).toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 0 });
+            }
+
+            function formatNumber(num, decimals = 4) {
+                return Number(num).toLocaleString('en-IN', { maximumFractionDigits: decimals, minimumFractionDigits: decimals });
+            }
+
+            function computeStockBreakdown(item) {
+                const inv = item.invest || 0;
+                const buyP = item.buyPrice || 0;
+                const buyR = item.buyRate || 0;
+                const sellP = item.sellPrice || 0;
+                const sellR = item.sellRate || 0;
+                const taxP = item.tax || 0;
+
+                let shares = 0, saleINR = 0, gross = 0, taxAmt = 0, net = 0, valid = false;
+
+                if (inv > 0 && buyP > 0 && buyR > 0 && sellP > 0 && sellR > 0) {
+                    const investUSD = inv / buyR;
+                    shares = investUSD / buyP;
+                    const saleUSD = shares * sellP;
+                    saleINR = saleUSD * sellR;
+                    gross = saleINR - inv;
+                    if (gross > 0) {
+                        taxAmt = gross * (taxP / 100);
+                    }
+                    net = gross - taxAmt;
+                    valid = true;
+                }
+                return { invested: inv, shares, saleINR, gross, tax: taxAmt, net, valid };
+            }
+
+            function renderPage(pageNum) {
+                currentPage = pageNum;
+                const data = pageData[pageNum];
+                const container = document.getElementById('pageContent');
+
+                document.querySelectorAll('.nav-links button').forEach(btn => {
+                    btn.classList.toggle('active', parseInt(btn.dataset.page) === pageNum);
+                });
+                document.getElementById('pageIndicator').textContent = `Page ${pageNum} of ${totalPages}`;
+                document.getElementById('pageBadge').textContent = `Page ${pageNum}`;
+                document.getElementById('pageSubhead').textContent = `Portfolio ${pageNum} · Comparison · Real‑time P&L`;
+
+                let html = `
+                    <div class="main-grid">
+                        <div>
+                            <div class="section-header">
+                                <h2>📋 Portfolio</h2>
+                                <span>stocks</span>
+                            </div>
+                            <div class="stock-list" id="stockContainer_${pageNum}">
+                `;
+
+                data.stocks.forEach((item, index) => {
+                    const fields = [
+                        { label: 'Stock', key: 'name', placeholder: 'e.g. AAPL', cur: '◈', type: 'text' },
+                        { label: 'Invest ₹', key: 'invest', placeholder: '100000', step: '1000', cur: '₹', type: 'number' },
+                        { label: 'Buy $', key: 'buyPrice', placeholder: '150.00', step: '0.01', cur: '$', type: 'number' },
+                        { label: 'Buy ₹/$', key: 'buyRate', placeholder: '83.00', step: '0.01', cur: '₹/$', type: 'number' },
+                        { label: 'Sell $', key: 'sellPrice', placeholder: '165.00', step: '0.01', cur: '$', type: 'number' },
+                        { label: 'Sell ₹/$', key: 'sellRate', placeholder: '84.00', step: '0.01', cur: '₹/$', type: 'number' },
+                        { label: 'Tax %', key: 'tax', placeholder: '0.50', step: '0.05', cur: '%', type: 'number' }
+                    ];
+
+                    html += `<div class="stock-entry" data-page="${pageNum}" data-index="${index}">
+                        <div class="input-row">`;
+                    
+                    fields.forEach(f => {
+                        const val = item[f.key] !== undefined ? item[f.key] : '';
+                        const inputType = f.type || 'number';
+                        const stepAttr = f.step ? `step="${f.step}"` : '';
+                        const placeholder = f.placeholder || '';
+                        const valueAttr = (f.key === 'name') ? `value="${val}"` : `value="${val}"`;
+                        html += `<div class="field ${f.key === 'name' ? 'stock-name-field' : ''}">
+                            <label>${f.label}</label>
+                            <div class="value">
+                                <span class="currency">${f.cur}</span>
+                                <input type="${inputType}" class="stock-input" data-page="${pageNum}" data-index="${index}" data-key="${f.key}" ${valueAttr} ${stepAttr} placeholder="${placeholder}">
+                            </div>
+                        </div>`;
+                    });
+                    
+                    html += `<button class="remove-btn" data-page="${pageNum}" data-index="${index}">✕</button>`;
+                    html += `</div>`;
+
+                    const bd = computeStockBreakdown(item);
+                    html += `<div class="stock-breakdown" id="breakdown-${pageNum}-${index}">
+                        <span class="bd-item"><span class="bd-label">Invested</span> <span class="bd-value" id="bd-invest-${pageNum}-${index}">${formatINR(bd.invested)}</span></span>
+                        <span class="bd-item"><span class="bd-label">Shares</span> <span class="bd-value" id="bd-shares-${pageNum}-${index}">${formatNumber(bd.shares, 4)}</span></span>
+                        <span class="bd-item"><span class="bd-label">Sale</span> <span class="bd-value" id="bd-sale-${pageNum}-${index}">${formatINR(bd.saleINR)}</span></span>
+                        <span class="bd-item"><span class="bd-label">Gross</span> <span class="bd-value ${bd.gross >= 0 ? 'bd-profit' : 'bd-loss'}" id="bd-gross-${pageNum}-${index}">${(bd.gross >= 0 ? '+' : '') + formatINR(bd.gross)}</span></span>
+                        <span class="bd-item"><span class="bd-label">Tax</span> <span class="bd-value" id="bd-tax-${pageNum}-${index}">${bd.tax > 0 ? `-${formatINR(bd.tax)}` : '₹0'}</span></span>
+                        <span class="bd-item"><span class="bd-label">Net</span> <span class="bd-value ${bd.net >= 0 ? 'bd-profit' : 'bd-loss'}" id="bd-net-${pageNum}-${index}">${(bd.net >= 0 ? '+' : '') + formatINR(bd.net)}</span></span>
+                    </div></div>`;
+                });
+
+                html += `
+                            </div>
+                            <div class="action-row">
+                                <button class="add-stock-btn" data-page="${pageNum}">+ Add stock</button>
+                                <button class="calc-btn primary" data-page="${pageNum}">⟳ Calculate</button>
+                                <button class="reset-btn" data-page="${pageNum}">↺ Reset</button>
+                            </div>
+                            <div class="result-panel" id="resultPanel_${pageNum}">
+                                <div class="result-item"><span class="label">Total Invested</span><span class="number" id="totalInvested_${pageNum}">₹0</span></div>
+                                <div class="result-item"><span class="label">Total Shares</span><span class="number" id="totalShares_${pageNum}">0</span></div>
+                                <div class="result-item"><span class="label">Total Sale</span><span class="number" id="totalSaleValue_${pageNum}">₹0</span></div>
+                                <div class="result-item"><span class="label">Gross P&L</span><span class="number" id="grossPnl_${pageNum}">₹0</span></div>
+                                <div class="result-item"><span class="label">Total Tax</span><span class="number" id="totalTax_${pageNum}">₹0</span></div>
+                                <div class="result-item" style="grid-column: 1 / -1; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 6px; margin-top: 2px;">
+                                    <span class="label" style="font-weight: 500; color:#8ab4d0;">Net Portfolio P&L</span>
+                                    <span class="number" id="netPnl_${pageNum}" style="font-size: 1.2rem;">₹0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="section-header" style="border-left-color: rgba(100, 180, 255, 0.12);">
+                                <h2>📊 Comparison</h2>
+                                <span>scenarios</span>
+                            </div>
+                            <div class="comparison-list-wrapper" id="comparisonList_${pageNum}">
+                `;
+
+                let allCompItems = [];
+                data.stocks.forEach((item, idx) => {
+                    allCompItems.push({ ...item, _isPortfolio: true, _portfolioIndex: idx });
+                });
+                data.extraComparisons.forEach((item, idx) => {
+                    allCompItems.push({ ...item, _isPortfolio: false, _extraIndex: idx });
+                });
+
+                if (allCompItems.length === 0) {
+                    html += `<div class="comparison-empty"><span>◈</span>No stocks. Add to portfolio.</div>`;
+                } else {
+                    allCompItems.forEach((item, index) => {
+                        const bd = computeStockBreakdown(item);
+                        const name = item.name || 'Unnamed';
+                        const isPortfolio = item._isPortfolio;
+
+                        const compFields = [
+                            { key: 'name', label: 'Stock', cur: '◈', type: 'text' },
+                            { key: 'invest', label: 'Invest ₹', cur: '₹', type: 'number' },
+                            { key: 'buyPrice', label: 'Buy $', cur: '$', type: 'number' },
+                            { key: 'buyRate', label: 'Buy ₹/$', cur: '₹/$', type: 'number' },
+                            { key: 'sellPrice', label: 'Sell $', cur: '$', type: 'number' },
+                            { key: 'sellRate', label: 'Sell ₹/$', cur: '₹/$', type: 'number' },
+                            { key: 'tax', label: 'Tax %', cur: '%', type: 'number' }
+                        ];
+
+                        let fieldsHtml = '';
+                        compFields.forEach(f => {
+                            const val = item[f.key] !== undefined ? item[f.key] : '';
+                            const inputType = f.type || 'number';
+                            const stepAttr = (f.key === 'invest') ? 'step="1000"' :
+                                            (f.key === 'tax') ? 'step="0.05"' : 'step="0.01"';
+                            const placeholder = (f.key === 'name') ? 'e.g. AAPL' :
+                                              (f.key === 'invest') ? '100000' : '0.00';
+                            
+                            const dataAttrs = isPortfolio ? 
+                                `data-comp-type="portfolio" data-page="${pageNum}" data-portfolio-index="${item._portfolioIndex}"` :
+                                `data-comp-type="extra" data-page="${pageNum}" data-extra-index="${item._extraIndex}"`;
+                            
+                            fieldsHtml += `
+                                <div class="comp-field">
+                                    <span class="comp-label">${f.label}</span>
+                                    <div class="comp-input">
+                                        <span class="currency">${f.cur}</span>
+                                        <input type="${inputType}" class="comp-input-field" ${dataAttrs} data-key="${f.key}" value="${val}" ${stepAttr} placeholder="${placeholder}">
+                                    </div>
+                                </div>
+                            `;
+                        });
+
+                        const badgeHtml = isPortfolio ? 
+                            `<span class="comp-portfolio-badge">◈ portfolio</span>` :
+                            `<span class="comp-scenario-badge">◇ extra</span>`;
+
+                        const removeHtml = isPortfolio ? '' : 
+                            `<button class="comp-remove" data-page="${pageNum}" data-extra-index="${item._extraIndex}">✕</button>`;
+
+                        html += `
+                            <div class="comparison-item">
+                                <div class="comp-header">
+                                    <span class="comp-name">${name}</span>
+                                    <div>${badgeHtml} ${removeHtml}</div>
+                                </div>
+                                <div class="comparison-grid">${fieldsHtml}</div>
+                                <div class="comp-result-row">
+                                    <div class="comp-result-item"><span class="comp-label">Shares</span><span class="comp-value">${formatNumber(bd.shares, 4)}</span></div>
+                                    <div class="comp-result-item"><span class="comp-label">Sale</span><span class="comp-value">${formatINR(bd.saleINR)}</span></div>
+                                    <div class="comp-result-item"><span class="comp-label">Gross</span><span class="comp-value ${bd.gross >= 0 ? 'highlight-profit' : 'highlight-loss'}">${(bd.gross >= 0 ? '+' : '') + formatINR(bd.gross)}</span></div>
+                                    <div class="comp-result-item"><span class="comp-label">Tax</span><span class="comp-value">${bd.tax > 0 ? `-${formatINR(bd.tax)}` : '₹0'}</span></div>
+                                    <div class="comp-result-item"><span class="comp-label">Net</span><span class="comp-value ${bd.net >= 0 ? 'highlight-profit' : 'highlight-loss'}">${(bd.net >= 0 ? '+' : '') + formatINR(bd.net)}</span></div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                html += `
+                            </div>
+                            <div class="action-row" style="margin: 4px 0 12px;">
+                                <button class="add-comp-btn" data-page="${pageNum}">+ Add scenario</button>
+                            </div>
+                            <div class="comparison-result-panel" id="comparisonResultPanel_${pageNum}">
+                                <div class="result-item"><span class="label">Total Invested</span><span class="number" id="compTotalInvested_${pageNum}">₹0</span></div>
+                                <div class="result-item"><span class="label">Total Shares</span><span class="number" id="compTotalShares_${pageNum}">0</span></div>
+                                <div class="result-item"><span class="label">Total Sale</span><span class="number" id="compTotalSale_${pageNum}">₹0</span></div>
+                                <div class="result-item"><span class="label">Gross P&L</span><span class="number" id="compGrossPnl_${pageNum}">₹0</span></div>
+                                <div class="result-item"><span class="label">Total Tax</span><span class="number" id="compTotalTax_${pageNum}">₹0</span></div>
+                                <div class="result-item" style="grid-column: 1 / -1; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 6px; margin-top: 2px;">
+                                    <span class="label" style="font-weight: 500; color:#8ab4d0;">Net Comparison P&L</span>
+                                    <span class="number" id="compNetPnl_${pageNum}" style="font-size: 1.2rem;">₹0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                container.innerHTML = html;
+                attachPageEvents(pageNum);
+                computePageTotals(pageNum);
+            }
+
+            function attachPageEvents(pageNum) {
+                const data = pageData[pageNum];
+
+                document.querySelectorAll(`.stock-input[data-page="${pageNum}"]`).forEach(input => {
+                    input.addEventListener('input', function() {
+                        const index = parseInt(this.dataset.index);
+                        const key = this.dataset.key;
+                        let val = this.value;
+                        if (key === 'name') {
+                            data.stocks[index][key] = val;
+                        } else {
+                            const numVal = parseFloat(val);
+                            if (!isNaN(numVal) && numVal >= 0) {
+                                data.stocks[index][key] = numVal;
+                            } else if (val === '') {
+                                data.stocks[index][key] = 0;
+                            }
+                        }
+                        computePageTotals(pageNum);
+                    });
+                });
+
+                document.querySelectorAll(`.remove-btn[data-page="${pageNum}"]`).forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.dataset.index);
+                        if (data.stocks.length <= 1) {
+                            showToast('⚠', 'Keep at least one stock.');
+                            return;
+                        }
+                        data.stocks.splice(index, 1);
+                        renderPage(pageNum);
+                    });
+                });
+
+                document.querySelector(`.add-stock-btn[data-page="${pageNum}"]`)?.addEventListener('click', function() {
+                    const last = data.stocks[data.stocks.length - 1] || { name: 'STK', invest: 100000, buyPrice: 150.50, buyRate: 83.20, sellPrice: 165.80, sellRate: 84.50, tax: 0.50 };
+                    data.stocks.push(createStockData(
+                        `STK${data.stocks.length + 1}`,
+                        last.invest || 100000,
+                        last.buyPrice || 150.50,
+                        last.buyRate || 83.20,
+                        last.sellPrice || 165.80,
+                        last.sellRate || 84.50,
+                        last.tax || 0.50
+                    ));
+                    renderPage(pageNum);
+                });
+
+                document.querySelector(`.reset-btn[data-page="${pageNum}"]`)?.addEventListener('click', function() {
+                    const defaults = {
+                        1: [
+                            { name: 'AAPL', invest: 100000, buyPrice: 150.50, buyRate: 83.20, sellPrice: 165.80, sellRate: 84.50, tax: 0.50 },
+                            { name: 'MSFT', invest: 50000, buyPrice: 320.00, buyRate: 83.50, sellPrice: 345.00, sellRate: 84.20, tax: 0.40 },
+                            { name: 'GOOGL', invest: 75000, buyPrice: 85.25, buyRate: 82.90, sellPrice: 79.50, sellRate: 84.00, tax: 0.60 }
+                        ],
+                        2: [
+                            { name: 'TSLA', invest: 120000, buyPrice: 250.00, buyRate: 83.00, sellPrice: 280.00, sellRate: 84.50, tax: 0.55 },
+                            { name: 'AMZN', invest: 80000, buyPrice: 180.50, buyRate: 83.30, sellPrice: 195.00, sellRate: 84.10, tax: 0.45 },
+                            { name: 'NVDA', invest: 90000, buyPrice: 450.00, buyRate: 83.40, sellPrice: 520.00, sellRate: 84.30, tax: 0.50 }
+                        ],
+                        3: [
+                            { name: 'META', invest: 70000, buyPrice: 200.00, buyRate: 83.10, sellPrice: 215.00, sellRate: 84.40, tax: 0.48 },
+                            { name: 'NFLX', invest: 60000, buyPrice: 380.00, buyRate: 83.25, sellPrice: 410.00, sellRate: 84.15, tax: 0.52 },
+                            { name: 'AMD', invest: 55000, buyPrice: 120.00, buyRate: 83.00, sellPrice: 135.00, sellRate: 84.00, tax: 0.42 }
+                        ],
+                        4: [
+                            { name: 'INTC', invest: 45000, buyPrice: 45.00, buyRate: 83.00, sellPrice: 48.00, sellRate: 84.00, tax: 0.38 },
+                            { name: 'IBM', invest: 65000, buyPrice: 140.00, buyRate: 83.20, sellPrice: 155.00, sellRate: 84.30, tax: 0.44 },
+                            { name: 'ORCL', invest: 85000, buyPrice: 110.00, buyRate: 83.15, sellPrice: 125.00, sellRate: 84.20, tax: 0.46 }
+                        ]
+                    };
+                    data.stocks = defaults[pageNum] || defaults[1];
+                    data.extraComparisons = [];
+                    renderPage(pageNum);
+                });
+
+                document.querySelector(`.calc-btn[data-page="${pageNum}"]`)?.addEventListener('click', function() {
+                    computePageTotals(pageNum);
+                    showToast('✓', 'Calculated');
+                });
+
+                document.querySelector(`.add-comp-btn[data-page="${pageNum}"]`)?.addEventListener('click', function() {
+                    const template = data.stocks.length > 0 ? data.stocks[0] : { name: 'AAPL', invest: 100000, buyPrice: 150.50, buyRate: 83.20, sellPrice: 165.80, sellRate: 84.50, tax: 0.50 };
+                    const newComp = createStockData(
+                        template.name || 'AAPL',
+                        (template.invest || 100000) * 1.1,
+                        (template.buyPrice || 150) * 1.05,
+                        (template.buyRate || 83) * 1.01,
+                        (template.sellPrice || 165) * 1.08,
+                        (template.sellRate || 84) * 1.01,
+                        (template.tax || 0.5) * 1.2
+                    );
+                    newComp.name = `${template.name || 'STK'} (extra ${data.extraComparisons.length + 1})`;
+                    data.extraComparisons.push(newComp);
+                    renderPage(pageNum);
+                });
+
+                document.querySelectorAll(`.comp-remove[data-page="${pageNum}"]`).forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const idx = parseInt(this.dataset.extraIndex);
+                        data.extraComparisons.splice(idx, 1);
+                        renderPage(pageNum);
+                    });
+                });
+
+                document.querySelectorAll(`.comp-input-field[data-page="${pageNum}"]`).forEach(input => {
+                    input.addEventListener('input', function() {
+                        const type = this.dataset.compType;
+                        const key = this.dataset.key;
+                        let val = this.value;
+
+                        if (type === 'portfolio') {
+                            const idx = parseInt(this.dataset.portfolioIndex);
+                            if (idx >= 0 && idx < data.stocks.length) {
+                                if (key === 'name') {
+                                    data.stocks[idx][key] = val;
+                                } else {
+                                    const numVal = parseFloat(val);
+                                    if (!isNaN(numVal) && numVal >= 0) {
+                                        data.stocks[idx][key] = numVal;
+                                    } else if (val === '') {
+                                        data.stocks[idx][key] = 0;
+                                    }
+                                }
+                                renderPage(pageNum);
+                            }
+                        } else if (type === 'extra') {
+                            const idx = parseInt(this.dataset.extraIndex);
+                            if (idx >= 0 && idx < data.extraComparisons.length) {
+                                if (key === 'name') {
+                                    data.extraComparisons[idx][key] = val;
+                                } else {
+                                    const numVal = parseFloat(val);
+                                    if (!isNaN(numVal) && numVal >= 0) {
+                                        data.extraComparisons[idx][key] = numVal;
+                                    } else if (val === '') {
+                                        data.extraComparisons[idx][key] = 0;
+                                    }
+                                }
+                                renderPage(pageNum);
+                            }
+                        }
+                    });
+                });
+            }
+
+            function computePageTotals(pageNum) {
+                const data = pageData[pageNum];
+                let totalInvest = 0, totalShares = 0, totalSaleINR = 0, totalGross = 0, totalTax = 0;
+
+                data.stocks.forEach((item, idx) => {
+                    const bd = computeStockBreakdown(item);
+                    const investEl = document.getElementById(`bd-invest-${pageNum}-${idx}`);
+                    const sharesEl = document.getElementById(`bd-shares-${pageNum}-${idx}`);
+                    const saleEl = document.getElementById(`bd-sale-${pageNum}-${idx}`);
+                    const grossEl = document.getElementById(`bd-gross-${pageNum}-${idx}`);
+                    const taxEl = document.getElementById(`bd-tax-${pageNum}-${idx}`);
+                    const netEl = document.getElementById(`bd-net-${pageNum}-${idx}`);
+
+                    if (investEl) investEl.textContent = formatINR(bd.invested);
+                    if (sharesEl) sharesEl.textContent = formatNumber(bd.shares, 4);
+                    if (saleEl) saleEl.textContent = formatINR(bd.saleINR);
+                    if (grossEl) {
+                        grossEl.textContent = (bd.gross >= 0 ? '+' : '') + formatINR(bd.gross);
+                        grossEl.className = 'bd-value ' + (bd.gross >= 0 ? 'bd-profit' : 'bd-loss');
+                    }
+                    if (taxEl) {
+                        taxEl.textContent = bd.tax > 0 ? `-${formatINR(bd.tax)}` : '₹0';
+                        taxEl.className = 'bd-value';
+                    }
+                    if (netEl) {
+                        netEl.textContent = (bd.net >= 0 ? '+' : '') + formatINR(bd.net);
+                        netEl.className = 'bd-value ' + (bd.net >= 0 ? 'bd-profit' : 'bd-loss');
+                    }
+
+                    if (bd.valid) {
+                        totalInvest += bd.invested;
+                        totalShares += bd.shares;
+                        totalSaleINR += bd.saleINR;
+                        totalGross += bd.gross;
+                        totalTax += bd.tax;
+                    } else {
+                        totalInvest += bd.invested;
+                    }
+                });
+
+                const netPnl = totalGross - totalTax;
+                document.getElementById(`totalInvested_${pageNum}`).textContent = formatINR(totalInvest);
+                document.getElementById(`totalShares_${pageNum}`).textContent = formatNumber(totalShares, 4);
+                document.getElementById(`totalSaleValue_${pageNum}`).textContent = formatINR(totalSaleINR);
+                
+                const grossEl = document.getElementById(`grossPnl_${pageNum}`);
+                grossEl.textContent = (totalGross >= 0 ? '+' : '') + formatINR(totalGross);
+                grossEl.style.color = totalGross >= 0 ? '#6a9a8a' : '#9a6a6a';
+
+                const taxEl = document.getElementById(`totalTax_${pageNum}`);
+                taxEl.textContent = totalTax > 0 ? `-${formatINR(totalTax)}` : '₹0';
+                taxEl.style.color = totalTax > 0 ? '#7a6a6a' : '#4a6a7e';
+
+                const netEl = document.getElementById(`netPnl_${pageNum}`);
+                netEl.textContent = (netPnl >= 0 ? '+' : '') + formatINR(netPnl);
+                netEl.className = 'number' + (netPnl > 0 ? ' highlight-profit' : netPnl < 0 ? ' highlight-loss' : '');
+
+                // Comparison totals
+                let compTotalInvest = 0, compTotalShares = 0, compTotalSale = 0, compTotalGross = 0, compTotalTax = 0;
+                let allItems = [];
+                data.stocks.forEach((item, idx) => {
+                    allItems.push({ ...item, _isPortfolio: true });
+                });
+                data.extraComparisons.forEach((item, idx) => {
+                    allItems.push({ ...item, _isPortfolio: false });
+                });
+
+                allItems.forEach(item => {
+                    const bd = computeStockBreakdown(item);
+                    if (bd.valid) {
+                        compTotalInvest += bd.invested;
+                        compTotalShares += bd.shares;
+                        compTotalSale += bd.saleINR;
+                        compTotalGross += bd.gross;
+                        compTotalTax += bd.tax;
+                    } else {
+                        compTotalInvest += bd.invested;
+                    }
+                });
+
+                const compNetPnl = compTotalGross - compTotalTax;
+                document.getElementById(`compTotalInvested_${pageNum}`).textContent = formatINR(compTotalInvest);
+                document.getElementById(`compTotalShares_${pageNum}`).textContent = formatNumber(compTotalShares, 4);
+                document.getElementById(`compTotalSale_${pageNum}`).textContent = formatINR(compTotalSale);
+
+                const compGrossEl = document.getElementById(`compGrossPnl_${pageNum}`);
+                compGrossEl.textContent = (compTotalGross >= 0 ? '+' : '') + formatINR(compTotalGross);
+                compGrossEl.style.color = compTotalGross >= 0 ? '#6a9a8a' : '#9a6a6a';
+
+                const compTaxEl = document.getElementById(`compTotalTax_${pageNum}`);
+                compTaxEl.textContent = compTotalTax > 0 ? `-${formatINR(compTotalTax)}` : '₹0';
+                compTaxEl.style.color = compTotalTax > 0 ? '#7a6a6a' : '#4a6a7e';
+
+                const compNetEl = document.getElementById(`compNetPnl_${pageNum}`);
+                compNetEl.textContent = (compNetPnl >= 0 ? '+' : '') + formatINR(compNetPnl);
+                compNetEl.className = 'number' + (compNetPnl > 0 ? ' highlight-profit' : compNetPnl < 0 ? ' highlight-loss' : '');
+            }
+
+            function showToast(title, message) {
+                const toast = document.getElementById('toast');
+                document.getElementById('toastTitle').textContent = title;
+                document.getElementById('toastMessage').textContent = message;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2500);
+            }
+
+            function downloadPage(pageNum) {
+                const data = pageData[pageNum];
+                let html = `<!DOCTYPE html>
+                <html>
+                <head><meta charset="UTF-8"><title>StockBridge - Portfolio ${pageNum}</title>
+                <style>
+                    body { font-family: system-ui, sans-serif; padding: 40px; background: #0f1a24; color: #c8dce8; }
+                    .container { max-width: 1200px; margin: 0 auto; background: rgba(18,30,42,0.95); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.04); }
+                    h1 { color: #8ab4d0; font-weight: 400; }
+                    table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                    th, td { padding: 10px 12px; border: 1px solid rgba(255,255,255,0.04); text-align: left; font-size: 0.85rem; }
+                    th { background: rgba(255,255,255,0.02); color: #8ab4d0; font-weight: 500; }
+                    .profit { color: #6a9a8a; }
+                    .loss { color: #9a6a6a; }
+                    .summary { background: rgba(0,0,0,0.2); padding: 20px; border-radius: 16px; margin-top: 20px; }
+                    .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+                    .summary-item { background: rgba(255,255,255,0.02); padding: 12px; border-radius: 12px; }
+                    .summary-item .label { font-size: 0.65rem; color: #4a6a7e; text-transform: uppercase; letter-spacing: 0.3px; }
+                    .summary-item .value { font-size: 1.1rem; font-weight: 500; color: #c8dce8; }
+                    .footnote { color: #4a6a7e; text-align: center; margin-top: 20px; font-size: 0.7rem; }
+                </style>
+                </head>
+                <body>
+                <div class="container">
+                    <h1>◈ StockBridge — Portfolio ${pageNum}</h1>
+                    <p style="color:#5a7d92;">Generated: ${new Date().toLocaleString()}</p>
+                    
+                    <h2 style="color:#8ab4d0; font-weight:400;">Portfolio Stocks</h2>
+                    <table>
+                        <thead><tr>
+                            <th>Stock</th><th>Invest (₹)</th><th>Buy Price ($)</th><th>Buy Rate</th>
+                            <th>Sell Price ($)</th><th>Sell Rate</th><th>Tax %</th>
+                            <th>Shares</th><th>Sale (₹)</th><th>Gross</th><th>Tax</th><th>Net</th>
+                        </tr></thead>
+                        <tbody>`;
+                
+                data.stocks.forEach(item => {
+                    const bd = computeStockBreakdown(item);
+                    html += `<tr>
+                        <td><strong>${item.name}</strong></td>
+                        <td>${formatINR(item.invest)}</td>
+                        <td>$${item.buyPrice}</td>
+                        <td>₹${item.buyRate}</td>
+                        <td>$${item.sellPrice}</td>
+                        <td>₹${item.sellRate}</td>
+                        <td>${item.tax}%</td>
+                        <td>${formatNumber(bd.shares, 4)}</td>
+                        <td>${formatINR(bd.saleINR)}</td>
+                        <td class="${bd.gross >= 0 ? 'profit' : 'loss'}">${(bd.gross >= 0 ? '+' : '') + formatINR(bd.gross)}</td>
+                        <td>${bd.tax > 0 ? `-${formatINR(bd.tax)}` : '₹0'}</td>
+                        <td class="${bd.net >= 0 ? 'profit' : 'loss'}">${(bd.net >= 0 ? '+' : '') + formatINR(bd.net)}</td>
+                    </tr>`;
+                });
+                
+                html += `</tbody></table>`;
+                
+                let totalInvest = 0, totalShares = 0, totalSale = 0, totalGross = 0, totalTax = 0;
+                data.stocks.forEach(item => {
+                    const bd = computeStockBreakdown(item);
+                    if (bd.valid) {
+                        totalInvest += bd.invested;
+                        totalShares += bd.shares;
+                        totalSale += bd.saleINR;
+                        totalGross += bd.gross;
+                        totalTax += bd.tax;
+                    }
+                });
+                const totalNet = totalGross - totalTax;
+                
+                html += `
+                    <div class="summary">
+                        <h3 style="color:#8ab4d0; font-weight:400;">Summary</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item"><div class="label">Total Invested</div><div class="value">${formatINR(totalInvest)}</div></div>
+                            <div class="summary-item"><div class="label">Total Shares</div><div class="value">${formatNumber(totalShares, 4)}</div></div>
+                            <div class="summary-item"><div class="label">Total Sale</div><div class="value">${formatINR(totalSale)}</div></div>
+                            <div class="summary-item"><div class="label">Gross P&L</div><div class="value ${totalGross >= 0 ? 'profit' : 'loss'}">${(totalGross >= 0 ? '+' : '') + formatINR(totalGross)}</div></div>
+                            <div class="summary-item"><div class="label">Total Tax</div><div class="value">${totalTax > 0 ? `-${formatINR(totalTax)}` : '₹0'}</div></div>
+                            <div class="summary-item"><div class="label" style="color:#8ab4d0;">Net P&L</div><div class="value ${totalNet >= 0 ? 'profit' : 'loss'}" style="font-size:1.3rem;">${(totalNet >= 0 ? '+' : '') + formatINR(totalNet)}</div></div>
+                        </div>
+                    </div>
+                    <div class="footnote">Tax applied on positive gross P&L · FX spread included</div>
+                </div>
+                </body>
+                </html>`;
+
+                const blob = new Blob([html], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `StockBridge_Portfolio${pageNum}_${new Date().toISOString().slice(0,10)}.html`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast('✓', `Portfolio ${pageNum} downloaded`);
+            }
+
+            function downloadAllPages() {
+                for (let i = 1; i <= totalPages; i++) {
+                    setTimeout(() => downloadPage(i), i * 300);
+                }
+                showToast('📦', 'Downloading all 4 portfolios...');
+            }
+
+            document.querySelectorAll('.nav-links button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    renderPage(parseInt(this.dataset.page));
+                });
+            });
+
+            document.getElementById('downloadBtn').addEventListener('click', function() {
+                downloadPage(currentPage);
+            });
+
+            document.getElementById('downloadAllBtn').addEventListener('click', function() {
+                downloadAllPages();
+            });
+
+            renderPage(1);
+        })();
+    </script>
+</body>
+</html>

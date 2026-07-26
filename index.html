@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StockBridge · Independent Scenarios</title>
+    <title>StockBridge · With Dates</title>
+    <!-- jsPDF library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js">
+    </script>
     <style>
         * {
             box-sizing: border-box;
@@ -14,7 +19,7 @@
             margin: 0;
             padding: 20px;
             background: #0f1a24;
-            background-image: 
+            background-image:
                 radial-gradient(ellipse at 20% 50%, rgba(30, 60, 90, 0.4) 0%, transparent 60%),
                 radial-gradient(ellipse at 80% 50%, rgba(20, 50, 80, 0.3) 0%, transparent 60%),
                 linear-gradient(180deg, #0f1a24 0%, #16232e 40%, #0f1a24 100%);
@@ -30,7 +35,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: 
+            background:
                 radial-gradient(circle at 30% 40%, rgba(100, 180, 255, 0.02) 0%, transparent 50%),
                 radial-gradient(circle at 70% 60%, rgba(100, 200, 180, 0.015) 0%, transparent 50%);
             pointer-events: none;
@@ -44,8 +49,8 @@
             -webkit-backdrop-filter: blur(16px);
             border-radius: 32px;
             padding: 28px 32px 32px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.04);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.04);
             position: relative;
             z-index: 1;
         }
@@ -56,9 +61,9 @@
             gap: 12px;
             margin-bottom: 24px;
             padding: 10px 16px;
-            background: rgba(0,0,0,0.2);
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 48px;
-            border: 1px solid rgba(255,255,255,0.04);
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
         .nav-bar .brand {
             font-weight: 600;
@@ -91,7 +96,7 @@
             transition: all 0.2s ease;
         }
         .nav-bar .nav-links button:hover {
-            background: rgba(255,255,255,0.04);
+            background: rgba(255, 255, 255, 0.04);
             color: #b0ccdc;
         }
         .nav-bar .nav-links button.active {
@@ -105,8 +110,8 @@
             margin-left: auto;
         }
         .nav-bar .nav-actions button {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.04);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.04);
             padding: 7px 14px;
             border-radius: 32px;
             font-weight: 500;
@@ -119,16 +124,16 @@
             gap: 5px;
         }
         .nav-bar .nav-actions button:hover {
-            background: rgba(255,255,255,0.07);
+            background: rgba(255, 255, 255, 0.07);
             color: #b0ccdc;
         }
         .nav-bar .page-indicator {
             color: #4a6a7e;
             font-size: 0.7rem;
             padding: 4px 12px;
-            background: rgba(255,255,255,0.03);
+            background: rgba(255, 255, 255, 0.03);
             border-radius: 24px;
-            border: 1px solid rgba(255,255,255,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
         h1 {
             font-size: 1.6rem;
@@ -152,11 +157,11 @@
             margin-bottom: 24px;
             border-left: 3px solid rgba(100, 180, 255, 0.15);
             padding-left: 14px;
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 0 8px 8px 0;
         }
         .badge {
-            background: rgba(255,255,255,0.04);
+            background: rgba(255, 255, 255, 0.04);
             color: #8ab4d0;
             border-radius: 32px;
             padding: 0 14px;
@@ -164,7 +169,7 @@
             font-weight: 500;
             letter-spacing: 0.3px;
             line-height: 1.8;
-            border: 1px solid rgba(255,255,255,0.04);
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
         .main-grid {
             display: grid;
@@ -177,7 +182,7 @@
             gap: 10px;
             margin: 0 0 12px 0;
             padding: 5px 0 5px 12px;
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 32px;
             border-left: 3px solid rgba(100, 180, 255, 0.12);
         }
@@ -189,13 +194,13 @@
             letter-spacing: -0.2px;
         }
         .section-header span {
-            background: rgba(255,255,255,0.03);
+            background: rgba(255, 255, 255, 0.03);
             color: #5a7d92;
             padding: 0 12px;
             border-radius: 24px;
             font-size: 0.6rem;
             font-weight: 500;
-            border: 1px solid rgba(255,255,255,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
         .stock-list {
             display: flex;
@@ -210,23 +215,23 @@
             width: 4px;
         }
         .stock-list::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 8px;
         }
         .stock-list::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.06);
+            background: rgba(255, 255, 255, 0.06);
             border-radius: 8px;
         }
         .stock-entry {
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 20px;
             padding: 14px 16px 16px;
-            border: 1px solid rgba(255,255,255,0.04);
+            border: 1px solid rgba(255, 255, 255, 0.04);
             transition: all 0.2s ease;
         }
         .stock-entry:hover {
-            border-color: rgba(255,255,255,0.06);
-            background: rgba(255,255,255,0.03);
+            border-color: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.03);
         }
         .stock-entry .input-row {
             display: flex;
@@ -250,10 +255,10 @@
         .stock-entry .field .value {
             display: flex;
             align-items: center;
-            background: rgba(0,0,0,0.25);
+            background: rgba(0, 0, 0, 0.25);
             border-radius: 24px;
             padding: 0 12px;
-            border: 1px solid rgba(255,255,255,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.03);
             transition: all 0.2s ease;
         }
         .stock-entry .field .value:focus-within {
@@ -270,8 +275,17 @@
             color: #c8dce8;
             outline: none;
         }
+        .stock-entry .field .value input[type="date"] {
+            padding: 6px 0 6px 4px;
+            font-size: 0.75rem;
+            color-scheme: dark;
+        }
+        .stock-entry .field .value input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.6);
+            cursor: pointer;
+        }
         .stock-entry .field .value input::placeholder {
-            color: rgba(255,255,255,0.08);
+            color: rgba(255, 255, 255, 0.08);
         }
         .stock-entry .field .value .currency {
             font-weight: 400;
@@ -280,8 +294,8 @@
             white-space: nowrap;
         }
         .stock-entry .remove-btn {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.03);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.03);
             border-radius: 32px;
             padding: 4px 12px;
             font-size: 0.7rem;
@@ -294,19 +308,19 @@
             height: 32px;
         }
         .stock-entry .remove-btn:hover {
-            background: rgba(255,70,70,0.05);
-            border-color: rgba(255,70,70,0.1);
+            background: rgba(255, 70, 70, 0.05);
+            border-color: rgba(255, 70, 70, 0.1);
             color: #8a7a7a;
         }
         .stock-breakdown {
             margin-top: 10px;
             padding: 8px 12px 8px;
-            background: rgba(0,0,0,0.15);
+            background: rgba(0, 0, 0, 0.15);
             border-radius: 16px;
             display: flex;
             flex-wrap: wrap;
             gap: 6px 16px;
-            border: 1px solid rgba(255,255,255,0.02);
+            border: 1px solid rgba(255, 255, 255, 0.02);
             font-size: 0.8rem;
         }
         .stock-breakdown .bd-item {
@@ -331,6 +345,9 @@
         .bd-loss {
             color: #9a6a6a !important;
         }
+        .bd-cagr {
+            color: #8ab4d0 !important;
+        }
 
         .action-row {
             display: flex;
@@ -339,8 +356,8 @@
             margin: 4px 0 12px;
         }
         .action-row button {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.04);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.04);
             padding: 7px 18px;
             border-radius: 32px;
             font-weight: 500;
@@ -353,8 +370,8 @@
             gap: 5px;
         }
         .action-row button:hover {
-            background: rgba(255,255,255,0.05);
-            border-color: rgba(255,255,255,0.06);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.06);
             color: #b0ccdc;
         }
         .action-row button.primary {
@@ -368,10 +385,10 @@
             color: #b0ccdc;
         }
         .result-panel {
-            background: rgba(0,0,0,0.2);
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 24px;
             padding: 14px 18px 14px;
-            border: 1px solid rgba(255,255,255,0.02);
+            border: 1px solid rgba(255, 255, 255, 0.02);
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 6px 12px;
@@ -400,20 +417,20 @@
             color: #9a6a6a !important;
         }
         .tax-tag {
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
             padding: 2px 12px;
             border-radius: 24px;
             font-size: 0.55rem;
             color: #5a7d92;
             display: inline-block;
-            border: 1px solid rgba(255,255,255,0.02);
+            border: 1px solid rgba(255, 255, 255, 0.02);
         }
         .footnote {
             font-size: 0.6rem;
             color: #3a5a6e;
             text-align: center;
             margin-top: 16px;
-            border-top: 1px solid rgba(255,255,255,0.02);
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
             padding-top: 14px;
         }
         @media (max-width: 900px) {
@@ -457,7 +474,7 @@
             -webkit-appearance: none;
         }
         .stock-name-field .value {
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
         }
         .stock-name-field .value input {
             font-weight: 400;
@@ -474,16 +491,16 @@
             overflow-y: visible;
         }
         .comparison-item {
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 20px;
             padding: 14px 16px 16px;
             margin-bottom: 14px;
-            border: 1px solid rgba(255,255,255,0.04);
+            border: 1px solid rgba(255, 255, 255, 0.04);
             transition: all 0.2s ease;
         }
         .comparison-item:hover {
-            border-color: rgba(255,255,255,0.06);
-            background: rgba(255,255,255,0.03);
+            border-color: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.03);
         }
         .comparison-item:last-child {
             margin-bottom: 0;
@@ -494,11 +511,11 @@
             align-items: center;
             margin-bottom: 8px;
             padding-bottom: 6px;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
         }
         .comparison-item .comp-remove {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.03);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.03);
             border-radius: 32px;
             padding: 3px 12px;
             font-size: 0.7rem;
@@ -508,8 +525,8 @@
             transition: all 0.2s ease;
         }
         .comparison-item .comp-remove:hover {
-            background: rgba(255,70,70,0.05);
-            border-color: rgba(255,70,70,0.1);
+            background: rgba(255, 70, 70, 0.05);
+            border-color: rgba(255, 70, 70, 0.1);
             color: #8a7a7a;
         }
         .comparison-grid {
@@ -531,10 +548,10 @@
         .comp-field .comp-input {
             display: flex;
             align-items: center;
-            background: rgba(0,0,0,0.25);
+            background: rgba(0, 0, 0, 0.25);
             border-radius: 24px;
             padding: 0 12px;
-            border: 1px solid rgba(255,255,255,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.03);
             transition: all 0.2s ease;
             margin-top: 2px;
         }
@@ -553,7 +570,7 @@
             outline: none;
         }
         .comp-field .comp-input input::placeholder {
-            color: rgba(255,255,255,0.06);
+            color: rgba(255, 255, 255, 0.06);
         }
         .comp-field .comp-input .currency {
             font-weight: 400;
@@ -577,9 +594,9 @@
             color: #4a6a7e;
             padding: 30px 20px;
             font-size: 0.85rem;
-            background: rgba(255,255,255,0.01);
+            background: rgba(255, 255, 255, 0.01);
             border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.02);
+            border: 1px solid rgba(255, 255, 255, 0.02);
         }
         .comparison-empty span {
             font-size: 2rem;
@@ -587,8 +604,8 @@
             margin-bottom: 8px;
         }
         .add-comp-btn {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.04);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
             border-radius: 32px;
             padding: 7px 18px;
             width: 100%;
@@ -600,18 +617,18 @@
             font-size: 0.78rem;
         }
         .add-comp-btn:hover {
-            background: rgba(255,255,255,0.04);
-            border-color: rgba(255,255,255,0.06);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.06);
             color: #b0ccdc;
         }
         .comp-scenario-badge {
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
             color: #5a7d92;
             padding: 2px 12px;
             border-radius: 24px;
             font-size: 0.55rem;
             font-weight: 500;
-            border: 1px solid rgba(255,255,255,0.02);
+            border: 1px solid rgba(255, 255, 255, 0.02);
         }
         .comp-field .comp-input input[type="number"] {
             -moz-appearance: textfield;
@@ -623,7 +640,7 @@
         .comp-result-row {
             margin-top: 8px;
             padding-top: 8px;
-            border-top: 1px solid rgba(255,255,255,0.03);
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
             display: flex;
             flex-wrap: wrap;
             gap: 10px 20px;
@@ -673,18 +690,18 @@
             width: 4px;
         }
         .comparison-list-wrapper::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 8px;
         }
         .comparison-list-wrapper::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.06);
+            background: rgba(255, 255, 255, 0.06);
             border-radius: 8px;
         }
         .comparison-result-panel {
-            background: rgba(0,0,0,0.2);
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 24px;
             padding: 14px 18px 14px;
-            border: 1px solid rgba(255,255,255,0.02);
+            border: 1px solid rgba(255, 255, 255, 0.02);
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 6px 12px;
@@ -716,8 +733,8 @@
             color: #c8dce8;
             padding: 14px 22px;
             border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.04);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             z-index: 999;
             opacity: 0;
             transform: translateY(16px);
@@ -742,6 +759,44 @@
             cursor: pointer;
             font-size: 1rem;
         }
+        /* PDF loading indicator */
+        .pdf-loading {
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+        .pdf-loading.show {
+            display: inline-flex;
+        }
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top: 2px solid #8ab4d0;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        /* Date field specific styling */
+        .date-field .value input[type="date"] {
+            color-scheme: dark;
+            padding: 6px 0 6px 4px;
+            font-size: 0.75rem;
+        }
+        .date-field .value input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.6);
+            cursor: pointer;
+        }
+        .date-field .value input[type="date"]:hover::-webkit-calendar-picker-indicator {
+            filter: invert(0.8);
+        }
     </style>
 </head>
 <body>
@@ -762,8 +817,14 @@
             </div>
             <div class="nav-actions">
                 <span class="page-indicator" id="pageIndicator">Page 1 of 4</span>
-                <button id="downloadBtn">⬇ Download</button>
-                <button id="downloadAllBtn">⬇ All</button>
+                <button id="downloadBtn">
+                    <span class="pdf-loading" id="pdfLoading"><span class="spinner"></span> Generating...</span>
+                    <span id="downloadText">📄 Download PDF</span>
+                </button>
+                <button id="downloadAllBtn">
+                    <span class="pdf-loading" id="pdfLoadingAll"><span class="spinner"></span> Generating...</span>
+                    <span id="downloadAllText">📄 All PDFs</span>
+                </button>
             </div>
         </div>
 
@@ -771,7 +832,7 @@
             <span>Multi‑Stock <span class="gold">Portfolio</span></span>
             <span class="badge" id="pageBadge">Page 1</span>
         </h1>
-        <div class="subhead" id="pageSubhead">Portfolio · Independent Scenarios · Separate Calculations</div>
+        <div class="subhead" id="pageSubhead">Portfolio · Independent Scenarios · Returns with Dates</div>
 
         <div id="pageContent"></div>
 
@@ -779,8 +840,9 @@
             <span class="tax-tag">Portfolio & Scenario totals are independent</span>
             <span class="tax-tag">Each scenario is a separate stock</span>
             <span class="tax-tag">Tax on positive P&L only</span>
+            <span class="tax-tag">📅 CAGR calculated from buy/sell dates</span>
         </div>
-        <div class="footnote">Stock · Invest ₹ · Buy/Sell price ($) · Buy/Sell rate (₹/$) · Tax & charges %</div>
+        <div class="footnote">Stock · Invest ₹ · Buy/Sell price ($) · Buy/Sell rate (₹/$) · Tax % · Buy/Sell Dates</div>
     </div>
 
     <script>
@@ -788,51 +850,77 @@
             let currentPage = 1;
             const totalPages = 4;
 
+            // Get today's date for default values
+            const today = new Date().toISOString().slice(0, 10);
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+            const oneYearAgoStr = oneYearAgo.toISOString().slice(0, 10);
+
             let pageData = {
                 1: {
                     stocks: [
-                        { name: 'AAPL', invest: 100000, buyPrice: 150.50, buyRate: 83.20, sellPrice: 165.80, sellRate: 84.50, tax: 0.50 },
-                        { name: 'MSFT', invest: 50000, buyPrice: 320.00, buyRate: 83.50, sellPrice: 345.00, sellRate: 84.20, tax: 0.40 },
-                        { name: 'GOOGL', invest: 75000, buyPrice: 85.25, buyRate: 82.90, sellPrice: 79.50, sellRate: 84.00, tax: 0.60 }
+                        { name: 'AAPL', invest: 100000, buyPrice: 150.50, buyRate: 83.20, sellPrice: 165.80,
+                            sellRate: 84.50, tax: 0.50, buyDate: oneYearAgoStr, sellDate: today },
+                        { name: 'MSFT', invest: 50000, buyPrice: 320.00, buyRate: 83.50, sellPrice: 345.00,
+                            sellRate: 84.20, tax: 0.40, buyDate: oneYearAgoStr, sellDate: today },
+                        { name: 'GOOGL', invest: 75000, buyPrice: 85.25, buyRate: 82.90, sellPrice: 79.50,
+                            sellRate: 84.00, tax: 0.60, buyDate: oneYearAgoStr, sellDate: today }
                     ],
                     comparisonScenarios: []
                 },
                 2: {
                     stocks: [
-                        { name: 'TSLA', invest: 120000, buyPrice: 250.00, buyRate: 83.00, sellPrice: 280.00, sellRate: 84.50, tax: 0.55 },
-                        { name: 'AMZN', invest: 80000, buyPrice: 180.50, buyRate: 83.30, sellPrice: 195.00, sellRate: 84.10, tax: 0.45 },
-                        { name: 'NVDA', invest: 90000, buyPrice: 450.00, buyRate: 83.40, sellPrice: 520.00, sellRate: 84.30, tax: 0.50 }
+                        { name: 'TSLA', invest: 120000, buyPrice: 250.00, buyRate: 83.00, sellPrice: 280.00,
+                            sellRate: 84.50, tax: 0.55, buyDate: oneYearAgoStr, sellDate: today },
+                        { name: 'AMZN', invest: 80000, buyPrice: 180.50, buyRate: 83.30, sellPrice: 195.00,
+                            sellRate: 84.10, tax: 0.45, buyDate: oneYearAgoStr, sellDate: today },
+                        { name: 'NVDA', invest: 90000, buyPrice: 450.00, buyRate: 83.40, sellPrice: 520.00,
+                            sellRate: 84.30, tax: 0.50, buyDate: oneYearAgoStr, sellDate: today }
                     ],
                     comparisonScenarios: []
                 },
                 3: {
                     stocks: [
-                        { name: 'META', invest: 70000, buyPrice: 200.00, buyRate: 83.10, sellPrice: 215.00, sellRate: 84.40, tax: 0.48 },
-                        { name: 'NFLX', invest: 60000, buyPrice: 380.00, buyRate: 83.25, sellPrice: 410.00, sellRate: 84.15, tax: 0.52 },
-                        { name: 'AMD', invest: 55000, buyPrice: 120.00, buyRate: 83.00, sellPrice: 135.00, sellRate: 84.00, tax: 0.42 }
+                        { name: 'META', invest: 70000, buyPrice: 200.00, buyRate: 83.10, sellPrice: 215.00,
+                            sellRate: 84.40, tax: 0.48, buyDate: oneYearAgoStr, sellDate: today },
+                        { name: 'NFLX', invest: 60000, buyPrice: 380.00, buyRate: 83.25, sellPrice: 410.00,
+                            sellRate: 84.15, tax: 0.52, buyDate: oneYearAgoStr, sellDate: today },
+                        { name: 'AMD', invest: 55000, buyPrice: 120.00, buyRate: 83.00, sellPrice: 135.00,
+                            sellRate: 84.00, tax: 0.42, buyDate: oneYearAgoStr, sellDate: today }
                     ],
                     comparisonScenarios: []
                 },
                 4: {
                     stocks: [
-                        { name: 'INTC', invest: 45000, buyPrice: 45.00, buyRate: 83.00, sellPrice: 48.00, sellRate: 84.00, tax: 0.38 },
-                        { name: 'IBM', invest: 65000, buyPrice: 140.00, buyRate: 83.20, sellPrice: 155.00, sellRate: 84.30, tax: 0.44 },
-                        { name: 'ORCL', invest: 85000, buyPrice: 110.00, buyRate: 83.15, sellPrice: 125.00, sellRate: 84.20, tax: 0.46 }
+                        { name: 'INTC', invest: 45000, buyPrice: 45.00, buyRate: 83.00, sellPrice: 48.00,
+                            sellRate: 84.00, tax: 0.38, buyDate: oneYearAgoStr, sellDate: today },
+                        { name: 'IBM', invest: 65000, buyPrice: 140.00, buyRate: 83.20, sellPrice: 155.00,
+                            sellRate: 84.30, tax: 0.44, buyDate: oneYearAgoStr, sellDate: today },
+                        { name: 'ORCL', invest: 85000, buyPrice: 110.00, buyRate: 83.15, sellPrice: 125.00,
+                            sellRate: 84.20, tax: 0.46, buyDate: oneYearAgoStr, sellDate: today }
                     ],
                     comparisonScenarios: []
                 }
             };
 
-            function createStockData(name, invest, buyPrice, buyRate, sellPrice, sellRate, tax) {
-                return { name, invest, buyPrice, buyRate, sellPrice, sellRate, tax };
+            function createStockData(name, invest, buyPrice, buyRate, sellPrice, sellRate, tax, buyDate, sellDate) {
+                return { name, invest, buyPrice, buyRate, sellPrice, sellRate, tax, buyDate: buyDate || oneYearAgoStr,
+                    sellDate: sellDate || today };
             }
 
             function formatINR(amount) {
-                return '₹' + Number(amount).toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 0 });
+                return '₹' + Number(amount).toLocaleString('en-IN', { maximumFractionDigits: 2,
+                minimumFractionDigits: 0 });
             }
 
             function formatNumber(num, decimals = 4) {
-                return Number(num).toLocaleString('en-IN', { maximumFractionDigits: decimals, minimumFractionDigits: decimals });
+                return Number(num).toLocaleString('en-IN', { maximumFractionDigits: decimals,
+                minimumFractionDigits: decimals });
+            }
+
+            function formatPercent(num) {
+                if (num === null || num === undefined || !isFinite(num)) return '—';
+                return (num * 100).toFixed(2) + '%';
             }
 
             function computeStockBreakdown(item) {
@@ -843,7 +931,12 @@
                 const sellR = item.sellRate || 0;
                 const taxP = item.tax || 0;
 
-                let shares = 0, saleINR = 0, gross = 0, taxAmt = 0, net = 0, valid = false;
+                let shares = 0,
+                    saleINR = 0,
+                    gross = 0,
+                    taxAmt = 0,
+                    net = 0,
+                    valid = false;
 
                 if (inv > 0 && buyP > 0 && buyR > 0 && sellP > 0 && sellR > 0) {
                     const investUSD = inv / buyR;
@@ -857,7 +950,27 @@
                     net = gross - taxAmt;
                     valid = true;
                 }
-                return { invested: inv, shares, saleINR, gross, tax: taxAmt, net, valid };
+
+                // Calculate holding period and CAGR
+                let holdingDays = 0;
+                let cagr = null;
+                if (item.buyDate && item.sellDate) {
+                    const buy = new Date(item.buyDate);
+                    const sell = new Date(item.sellDate);
+                    const diffTime = sell.getTime() - buy.getTime();
+                    holdingDays = Math.max(0, diffTime / (1000 * 60 * 60 * 24));
+                    if (holdingDays > 0 && valid && gross > 0) {
+                        const years = holdingDays / 365;
+                        const totalReturn = net / inv;
+                        cagr = Math.pow(1 + totalReturn, 1 / years) - 1;
+                    } else if (holdingDays > 0 && valid && gross < 0) {
+                        const years = holdingDays / 365;
+                        const totalReturn = net / inv;
+                        cagr = Math.pow(1 + totalReturn, 1 / years) - 1;
+                    }
+                }
+
+                return { invested: inv, shares, saleINR, gross, tax: taxAmt, net, valid, holdingDays, cagr };
             }
 
             function renderPage(pageNum) {
@@ -870,7 +983,8 @@
                 });
                 document.getElementById('pageIndicator').textContent = `Page ${pageNum} of ${totalPages}`;
                 document.getElementById('pageBadge').textContent = `Page ${pageNum}`;
-                document.getElementById('pageSubhead').textContent = `Portfolio ${pageNum} · Independent Scenarios · Separate Calculations`;
+                document.getElementById('pageSubhead').textContent =
+                    `Portfolio ${pageNum} · Independent Scenarios · Returns with Dates`;
 
                 let html = `
                     <div class="main-grid">
@@ -884,25 +998,36 @@
 
                 data.stocks.forEach((item, index) => {
                     const fields = [
-                        { label: 'Stock', key: 'name', placeholder: 'e.g. AAPL', cur: '◈', type: 'text' },
-                        { label: 'Invest ₹', key: 'invest', placeholder: '100000', step: '1000', cur: '₹', type: 'number' },
-                        { label: 'Buy $', key: 'buyPrice', placeholder: '150.00', step: '0.01', cur: '$', type: 'number' },
-                        { label: 'Buy ₹/$', key: 'buyRate', placeholder: '83.00', step: '0.01', cur: '₹/$', type: 'number' },
-                        { label: 'Sell $', key: 'sellPrice', placeholder: '165.00', step: '0.01', cur: '$', type: 'number' },
-                        { label: 'Sell ₹/$', key: 'sellRate', placeholder: '84.00', step: '0.01', cur: '₹/$', type: 'number' },
-                        { label: 'Tax %', key: 'tax', placeholder: '0.50', step: '0.05', cur: '%', type: 'number' }
+                        { label: 'Stock', key: 'name', placeholder: 'e.g. AAPL', cur: '◈', type: 'text',
+                        class: 'stock-name-field' },
+                        { label: 'Invest ₹', key: 'invest', placeholder: '100000', step: '1000', cur: '₹',
+                            type: 'number' },
+                        { label: 'Buy $', key: 'buyPrice', placeholder: '150.00', step: '0.01', cur: '$',
+                            type: 'number' },
+                        { label: 'Buy ₹/$', key: 'buyRate', placeholder: '83.00', step: '0.01', cur: '₹/$',
+                            type: 'number' },
+                        { label: 'Sell $', key: 'sellPrice', placeholder: '165.00', step: '0.01', cur: '$',
+                            type: 'number' },
+                        { label: 'Sell ₹/$', key: 'sellRate', placeholder: '84.00', step: '0.01', cur: '₹/$',
+                            type: 'number' },
+                        { label: 'Tax %', key: 'tax', placeholder: '0.50', step: '0.05', cur: '%', type: 'number' },
+                        { label: 'Buy Date', key: 'buyDate', placeholder: '', cur: '📅', type: 'date',
+                        class: 'date-field' },
+                        { label: 'Sell Date', key: 'sellDate', placeholder: '', cur: '📅', type: 'date',
+                            class: 'date-field' }
                     ];
 
                     html += `<div class="stock-entry" data-page="${pageNum}" data-index="${index}">
                         <div class="input-row">`;
-                    
+
                     fields.forEach(f => {
                         const val = item[f.key] !== undefined ? item[f.key] : '';
                         const inputType = f.type || 'number';
                         const stepAttr = f.step ? `step="${f.step}"` : '';
                         const placeholder = f.placeholder || '';
                         const valueAttr = (f.key === 'name') ? `value="${val}"` : `value="${val}"`;
-                        html += `<div class="field ${f.key === 'name' ? 'stock-name-field' : ''}">
+                        const extraClass = f.class || '';
+                        html += `<div class="field ${extraClass}">
                             <label>${f.label}</label>
                             <div class="value">
                                 <span class="currency">${f.cur}</span>
@@ -910,7 +1035,7 @@
                             </div>
                         </div>`;
                     });
-                    
+
                     html += `<button class="remove-btn" data-page="${pageNum}" data-index="${index}">✕</button>`;
                     html += `</div>`;
 
@@ -922,6 +1047,8 @@
                         <span class="bd-item"><span class="bd-label">Gross</span> <span class="bd-value ${bd.gross >= 0 ? 'bd-profit' : 'bd-loss'}" id="bd-gross-${pageNum}-${index}">${(bd.gross >= 0 ? '+' : '') + formatINR(bd.gross)}</span></span>
                         <span class="bd-item"><span class="bd-label">Tax</span> <span class="bd-value" id="bd-tax-${pageNum}-${index}">${bd.tax > 0 ? `-${formatINR(bd.tax)}` : '₹0'}</span></span>
                         <span class="bd-item"><span class="bd-label">Net</span> <span class="bd-value ${bd.net >= 0 ? 'bd-profit' : 'bd-loss'}" id="bd-net-${pageNum}-${index}">${(bd.net >= 0 ? '+' : '') + formatINR(bd.net)}</span></span>
+                        <span class="bd-item"><span class="bd-label">📅 Days</span> <span class="bd-value" id="bd-days-${pageNum}-${index}">${bd.holdingDays || 0}</span></span>
+                        <span class="bd-item"><span class="bd-label">📈 CAGR</span> <span class="bd-value ${bd.cagr !== null && bd.cagr >= 0 ? 'bd-profit' : bd.cagr !== null && bd.cagr < 0 ? 'bd-loss' : ''}" id="bd-cagr-${pageNum}-${index}">${bd.cagr !== null ? formatPercent(bd.cagr) : '—'}</span></span>
                     </div></div>`;
                 });
 
@@ -953,24 +1080,31 @@
                             <div class="comparison-list-wrapper" id="comparisonList_${pageNum}">
                 `;
 
-                // Only show comparison scenarios (independent stocks)
                 const scenarios = data.comparisonScenarios || [];
 
                 if (scenarios.length === 0) {
-                    html += `<div class="comparison-empty"><span>◈</span>No comparison scenarios.<br>Click "Add Scenario" to create your first independent scenario stock.</div>`;
+                    html +=
+                        `<div class="comparison-empty"><span>◈</span>No comparison scenarios.<br>Click "Add Scenario" to create your first independent scenario stock.</div>`;
                 } else {
                     scenarios.forEach((item, index) => {
                         const bd = computeStockBreakdown(item);
-                        const name = item.name || 'Unnamed';
 
                         const compFields = [
                             { label: 'Stock', key: 'name', placeholder: 'e.g. AAPL', cur: '◈', type: 'text' },
-                            { label: 'Invest ₹', key: 'invest', placeholder: '100000', step: '1000', cur: '₹', type: 'number' },
-                            { label: 'Buy $', key: 'buyPrice', placeholder: '150.00', step: '0.01', cur: '$', type: 'number' },
-                            { label: 'Buy ₹/$', key: 'buyRate', placeholder: '83.00', step: '0.01', cur: '₹/$', type: 'number' },
-                            { label: 'Sell $', key: 'sellPrice', placeholder: '165.00', step: '0.01', cur: '$', type: 'number' },
-                            { label: 'Sell ₹/$', key: 'sellRate', placeholder: '84.00', step: '0.01', cur: '₹/$', type: 'number' },
-                            { label: 'Tax %', key: 'tax', placeholder: '0.50', step: '0.05', cur: '%', type: 'number' }
+                            { label: 'Invest ₹', key: 'invest', placeholder: '100000', step: '1000', cur: '₹',
+                                type: 'number' },
+                            { label: 'Buy $', key: 'buyPrice', placeholder: '150.00', step: '0.01', cur: '$',
+                                type: 'number' },
+                            { label: 'Buy ₹/$', key: 'buyRate', placeholder: '83.00', step: '0.01', cur: '₹/$',
+                                type: 'number' },
+                            { label: 'Sell $', key: 'sellPrice', placeholder: '165.00', step: '0.01', cur: '$',
+                                type: 'number' },
+                            { label: 'Sell ₹/$', key: 'sellRate', placeholder: '84.00', step: '0.01', cur: '₹/$',
+                                type: 'number' },
+                            { label: 'Tax %', key: 'tax', placeholder: '0.50', step: '0.05', cur: '%',
+                            type: 'number' },
+                            { label: 'Buy Date', key: 'buyDate', placeholder: '', cur: '📅', type: 'date' },
+                            { label: 'Sell Date', key: 'sellDate', placeholder: '', cur: '📅', type: 'date' }
                         ];
 
                         let fieldsHtml = '';
@@ -978,9 +1112,9 @@
                             const val = item[f.key] !== undefined ? item[f.key] : '';
                             const inputType = f.type || 'number';
                             const stepAttr = (f.key === 'invest') ? 'step="1000"' :
-                                            (f.key === 'tax') ? 'step="0.05"' : 'step="0.01"';
+                                (f.key === 'tax') ? 'step="0.05"' : 'step="0.01"';
                             const placeholder = f.placeholder || '';
-                            
+
                             fieldsHtml += `
                                 <div class="comp-field">
                                     <span class="comp-label">${f.label}</span>
@@ -1004,6 +1138,8 @@
                                     <div class="comp-result-item"><span class="comp-label">Gross</span><span class="comp-value ${bd.gross >= 0 ? 'highlight-profit' : 'highlight-loss'}">${(bd.gross >= 0 ? '+' : '') + formatINR(bd.gross)}</span></div>
                                     <div class="comp-result-item"><span class="comp-label">Tax</span><span class="comp-value">${bd.tax > 0 ? `-${formatINR(bd.tax)}` : '₹0'}</span></div>
                                     <div class="comp-result-item"><span class="comp-label">Net</span><span class="comp-value ${bd.net >= 0 ? 'highlight-profit' : 'highlight-loss'}">${(bd.net >= 0 ? '+' : '') + formatINR(bd.net)}</span></div>
+                                    <div class="comp-result-item"><span class="comp-label">📅 Days</span><span class="comp-value">${bd.holdingDays || 0}</span></div>
+                                    <div class="comp-result-item"><span class="comp-label">📈 CAGR</span><span class="comp-value ${bd.cagr !== null && bd.cagr >= 0 ? 'highlight-profit' : bd.cagr !== null && bd.cagr < 0 ? 'highlight-loss' : ''}">${bd.cagr !== null ? formatPercent(bd.cagr) : '—'}</span></div>
                                 </div>
                             </div>
                         `;
@@ -1038,13 +1174,14 @@
             function attachPageEvents(pageNum) {
                 const data = pageData[pageNum];
 
-                // Portfolio stock events
                 document.querySelectorAll(`.stock-input[data-page="${pageNum}"]`).forEach(input => {
                     input.addEventListener('input', function() {
                         const index = parseInt(this.dataset.index);
                         const key = this.dataset.key;
                         let val = this.value;
                         if (key === 'name') {
+                            data.stocks[index][key] = val;
+                        } else if (key === 'buyDate' || key === 'sellDate') {
                             data.stocks[index][key] = val;
                         } else {
                             const numVal = parseFloat(val);
@@ -1070,41 +1207,58 @@
                     });
                 });
 
-                document.querySelector(`.add-stock-btn[data-page="${pageNum}"]`)?.addEventListener('click', function() {
-                    const last = data.stocks[data.stocks.length - 1] || { name: 'STK', invest: 100000, buyPrice: 150.50, buyRate: 83.20, sellPrice: 165.80, sellRate: 84.50, tax: 0.50 };
-                    data.stocks.push(createStockData(
-                        `STK${data.stocks.length + 1}`,
-                        last.invest || 100000,
-                        last.buyPrice || 150.50,
-                        last.buyRate || 83.20,
-                        last.sellPrice || 165.80,
-                        last.sellRate || 84.50,
-                        last.tax || 0.50
-                    ));
-                    renderPage(pageNum);
-                });
+                document.querySelector(`.add-stock-btn[data-page="${pageNum}"]`)?.addEventListener('click',
+                    function() {
+                        const last = data.stocks[data.stocks.length - 1] || { name: 'STK', invest: 100000,
+                            buyPrice: 150.50, buyRate: 83.20, sellPrice: 165.80, sellRate: 84.50, tax: 0.50,
+                            buyDate: oneYearAgoStr, sellDate: today };
+                        data.stocks.push(createStockData(
+                            `STK${data.stocks.length + 1}`,
+                            last.invest || 100000,
+                            last.buyPrice || 150.50,
+                            last.buyRate || 83.20,
+                            last.sellPrice || 165.80,
+                            last.sellRate || 84.50,
+                            last.tax || 0.50,
+                            last.buyDate || oneYearAgoStr,
+                            last.sellDate || today
+                        ));
+                        renderPage(pageNum);
+                    });
 
                 document.querySelector(`.reset-btn[data-page="${pageNum}"]`)?.addEventListener('click', function() {
                     const defaults = {
                         1: [
-                            { name: 'AAPL', invest: 100000, buyPrice: 150.50, buyRate: 83.20, sellPrice: 165.80, sellRate: 84.50, tax: 0.50 },
-                            { name: 'MSFT', invest: 50000, buyPrice: 320.00, buyRate: 83.50, sellPrice: 345.00, sellRate: 84.20, tax: 0.40 },
-                            { name: 'GOOGL', invest: 75000, buyPrice: 85.25, buyRate: 82.90, sellPrice: 79.50, sellRate: 84.00, tax: 0.60 }
+                            { name: 'AAPL', invest: 100000, buyPrice: 150.50, buyRate: 83.20, sellPrice: 165.80,
+                                sellRate: 84.50, tax: 0.50, buyDate: oneYearAgoStr, sellDate: today },
+                            { name: 'MSFT', invest: 50000, buyPrice: 320.00, buyRate: 83.50, sellPrice: 345.00,
+                                sellRate: 84.20, tax: 0.40, buyDate: oneYearAgoStr, sellDate: today },
+                            { name: 'GOOGL', invest: 75000, buyPrice: 85.25, buyRate: 82.90, sellPrice: 79.50,
+                                sellRate: 84.00, tax: 0.60, buyDate: oneYearAgoStr, sellDate: today }
                         ],
                         2: [
-                            { name: 'TSLA', invest: 120000, buyPrice: 250.00, buyRate: 83.00, sellPrice: 280.00, sellRate: 84.50, tax: 0.55 },
-                            { name: 'AMZN', invest: 80000, buyPrice: 180.50, buyRate: 83.30, sellPrice: 195.00, sellRate: 84.10, tax: 0.45 },
-                            { name: 'NVDA', invest: 90000, buyPrice: 450.00, buyRate: 83.40, sellPrice: 520.00, sellRate: 84.30, tax: 0.50 }
+                            { name: 'TSLA', invest: 120000, buyPrice: 250.00, buyRate: 83.00, sellPrice: 280.00,
+                                sellRate: 84.50, tax: 0.55, buyDate: oneYearAgoStr, sellDate: today },
+                            { name: 'AMZN', invest: 80000, buyPrice: 180.50, buyRate: 83.30, sellPrice: 195.00,
+                                sellRate: 84.10, tax: 0.45, buyDate: oneYearAgoStr, sellDate: today },
+                            { name: 'NVDA', invest: 90000, buyPrice: 450.00, buyRate: 83.40, sellPrice: 520.00,
+                                sellRate: 84.30, tax: 0.50, buyDate: oneYearAgoStr, sellDate: today }
                         ],
                         3: [
-                            { name: 'META', invest: 70000, buyPrice: 200.00, buyRate: 83.10, sellPrice: 215.00, sellRate: 84.40, tax: 0.48 },
-                            { name: 'NFLX', invest: 60000, buyPrice: 380.00, buyRate: 83.25, sellPrice: 410.00, sellRate: 84.15, tax: 0.52 },
-                            { name: 'AMD', invest: 55000, buyPrice: 120.00, buyRate: 83.00, sellPrice: 135.00, sellRate: 84.00, tax: 0.42 }
+                            { name: 'META', invest: 70000, buyPrice: 200.00, buyRate: 83.10, sellPrice: 215.00,
+                                sellRate: 84.40, tax: 0.48, buyDate: oneYearAgoStr, sellDate: today },
+                            { name: 'NFLX', invest: 60000, buyPrice: 380.00, buyRate: 83.25, sellPrice: 410.00,
+                                sellRate: 84.15, tax: 0.52, buyDate: oneYearAgoStr, sellDate: today },
+                            { name: 'AMD', invest: 55000, buyPrice: 120.00, buyRate: 83.00, sellPrice: 135.00,
+                                sellRate: 84.00, tax: 0.42, buyDate: oneYearAgoStr, sellDate: today }
                         ],
                         4: [
-                            { name: 'INTC', invest: 45000, buyPrice: 45.00, buyRate: 83.00, sellPrice: 48.00, sellRate: 84.00, tax: 0.38 },
-                            { name: 'IBM', invest: 65000, buyPrice: 140.00, buyRate: 83.20, sellPrice: 155.00, sellRate: 84.30, tax: 0.44 },
-                            { name: 'ORCL', invest: 85000, buyPrice: 110.00, buyRate: 83.15, sellPrice: 125.00, sellRate: 84.20, tax: 0.46 }
+                            { name: 'INTC', invest: 45000, buyPrice: 45.00, buyRate: 83.00, sellPrice: 48.00,
+                                sellRate: 84.00, tax: 0.38, buyDate: oneYearAgoStr, sellDate: today },
+                            { name: 'IBM', invest: 65000, buyPrice: 140.00, buyRate: 83.20, sellPrice: 155.00,
+                                sellRate: 84.30, tax: 0.44, buyDate: oneYearAgoStr, sellDate: today },
+                            { name: 'ORCL', invest: 85000, buyPrice: 110.00, buyRate: 83.15, sellPrice: 125.00,
+                                sellRate: 84.20, tax: 0.46, buyDate: oneYearAgoStr, sellDate: today }
                         ]
                     };
                     data.stocks = defaults[pageNum] || defaults[1];
@@ -1117,25 +1271,25 @@
                     showToast('✓', 'Calculated');
                 });
 
-                // Comparison scenario events - ADD INDEPENDENT SCENARIO
-                document.querySelector(`.add-comp-btn[data-page="${pageNum}"]`)?.addEventListener('click', function() {
-                    // Create a completely independent scenario with default values
-                    const newScenario = createStockData(
-                        `Scenario ${(data.comparisonScenarios || []).length + 1}`,
-                        100000,
-                        150.00,
-                        83.00,
-                        160.00,
-                        84.00,
-                        0.50
-                    );
-                    if (!data.comparisonScenarios) data.comparisonScenarios = [];
-                    data.comparisonScenarios.push(newScenario);
-                    renderPage(pageNum);
-                    showToast('✓', 'New scenario added');
-                });
+                document.querySelector(`.add-comp-btn[data-page="${pageNum}"]`)?.addEventListener('click',
+                    function() {
+                        const newScenario = createStockData(
+                            `Scenario ${(data.comparisonScenarios || []).length + 1}`,
+                            100000,
+                            150.00,
+                            83.00,
+                            160.00,
+                            84.00,
+                            0.50,
+                            oneYearAgoStr,
+                            today
+                        );
+                        if (!data.comparisonScenarios) data.comparisonScenarios = [];
+                        data.comparisonScenarios.push(newScenario);
+                        renderPage(pageNum);
+                        showToast('✓', 'New scenario added');
+                    });
 
-                // Remove scenario
                 document.querySelectorAll(`.comp-remove[data-page="${pageNum}"]`).forEach(btn => {
                     btn.addEventListener('click', function() {
                         const idx = parseInt(this.dataset.index);
@@ -1147,15 +1301,16 @@
                     });
                 });
 
-                // Scenario input events
                 document.querySelectorAll(`.comp-input-field[data-page="${pageNum}"]`).forEach(input => {
                     input.addEventListener('input', function() {
                         const idx = parseInt(this.dataset.index);
                         const key = this.dataset.key;
                         let val = this.value;
-                        
+
                         if (data.comparisonScenarios && idx >= 0 && idx < data.comparisonScenarios.length) {
                             if (key === 'name') {
+                                data.comparisonScenarios[idx][key] = val;
+                            } else if (key === 'buyDate' || key === 'sellDate') {
                                 data.comparisonScenarios[idx][key] = val;
                             } else {
                                 const numVal = parseFloat(val);
@@ -1173,9 +1328,12 @@
 
             function computePageTotals(pageNum) {
                 const data = pageData[pageNum];
-                
-                // ---- PORTFOLIO TOTALS ----
-                let totalInvest = 0, totalShares = 0, totalSaleINR = 0, totalGross = 0, totalTax = 0;
+
+                let totalInvest = 0,
+                    totalShares = 0,
+                    totalSaleINR = 0,
+                    totalGross = 0,
+                    totalTax = 0;
 
                 data.stocks.forEach((item, idx) => {
                     const bd = computeStockBreakdown(item);
@@ -1185,6 +1343,8 @@
                     const grossEl = document.getElementById(`bd-gross-${pageNum}-${idx}`);
                     const taxEl = document.getElementById(`bd-tax-${pageNum}-${idx}`);
                     const netEl = document.getElementById(`bd-net-${pageNum}-${idx}`);
+                    const daysEl = document.getElementById(`bd-days-${pageNum}-${idx}`);
+                    const cagrEl = document.getElementById(`bd-cagr-${pageNum}-${idx}`);
 
                     if (investEl) investEl.textContent = formatINR(bd.invested);
                     if (sharesEl) sharesEl.textContent = formatNumber(bd.shares, 4);
@@ -1200,6 +1360,14 @@
                     if (netEl) {
                         netEl.textContent = (bd.net >= 0 ? '+' : '') + formatINR(bd.net);
                         netEl.className = 'bd-value ' + (bd.net >= 0 ? 'bd-profit' : 'bd-loss');
+                    }
+                    if (daysEl) {
+                        daysEl.textContent = bd.holdingDays || 0;
+                    }
+                    if (cagrEl) {
+                        cagrEl.textContent = bd.cagr !== null ? formatPercent(bd.cagr) : '—';
+                        cagrEl.className = 'bd-value' + (bd.cagr !== null && bd.cagr >= 0 ? ' bd-profit' : bd
+                            .cagr !== null && bd.cagr < 0 ? ' bd-loss' : '');
                     }
 
                     if (bd.valid) {
@@ -1217,7 +1385,7 @@
                 document.getElementById(`totalInvested_${pageNum}`).textContent = formatINR(totalInvest);
                 document.getElementById(`totalShares_${pageNum}`).textContent = formatNumber(totalShares, 4);
                 document.getElementById(`totalSaleValue_${pageNum}`).textContent = formatINR(totalSaleINR);
-                
+
                 const grossEl = document.getElementById(`grossPnl_${pageNum}`);
                 grossEl.textContent = (totalGross >= 0 ? '+' : '') + formatINR(totalGross);
                 grossEl.style.color = totalGross >= 0 ? '#6a9a8a' : '#9a6a6a';
@@ -1230,8 +1398,11 @@
                 netEl.textContent = (netPnl >= 0 ? '+' : '') + formatINR(netPnl);
                 netEl.className = 'number' + (netPnl > 0 ? ' highlight-profit' : netPnl < 0 ? ' highlight-loss' : '');
 
-                // ---- COMPARISON SCENARIOS TOTALS (independent scenarios) ----
-                let compTotalInvest = 0, compTotalShares = 0, compTotalSale = 0, compTotalGross = 0, compTotalTax = 0;
+                let compTotalInvest = 0,
+                    compTotalShares = 0,
+                    compTotalSale = 0,
+                    compTotalGross = 0,
+                    compTotalTax = 0;
                 const scenarios = data.comparisonScenarios || [];
 
                 scenarios.forEach(item => {
@@ -1262,7 +1433,8 @@
 
                 const compNetEl = document.getElementById(`compNetPnl_${pageNum}`);
                 compNetEl.textContent = (compNetPnl >= 0 ? '+' : '') + formatINR(compNetPnl);
-                compNetEl.className = 'number' + (compNetPnl > 0 ? ' highlight-profit' : compNetPnl < 0 ? ' highlight-loss' : '');
+                compNetEl.className = 'number' + (compNetPnl > 0 ? ' highlight-profit' : compNetPnl < 0 ?
+                    ' highlight-loss' : '');
             }
 
             function showToast(title, message) {
@@ -1273,65 +1445,129 @@
                 setTimeout(() => toast.classList.remove('show'), 2500);
             }
 
-            function downloadPage(pageNum) {
+            // ----- PDF GENERATION -----
+            function generatePDF(pageNum, isAll = false) {
                 const data = pageData[pageNum];
-                let html = `<!DOCTYPE html>
-                <html>
-                <head><meta charset="UTF-8"><title>StockBridge - Portfolio ${pageNum}</title>
-                <style>
-                    body { font-family: system-ui, sans-serif; padding: 40px; background: #0f1a24; color: #c8dce8; }
-                    .container { max-width: 1200px; margin: 0 auto; background: rgba(18,30,42,0.95); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.04); }
-                    h1 { color: #8ab4d0; font-weight: 400; }
-                    h2 { color: #8ab4d0; font-weight: 400; margin-top: 30px; }
-                    table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-                    th, td { padding: 10px 12px; border: 1px solid rgba(255,255,255,0.04); text-align: left; font-size: 0.85rem; }
-                    th { background: rgba(255,255,255,0.02); color: #8ab4d0; font-weight: 500; }
-                    .profit { color: #6a9a8a; }
-                    .loss { color: #9a6a6a; }
-                    .summary { background: rgba(0,0,0,0.2); padding: 20px; border-radius: 16px; margin-top: 20px; }
-                    .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-                    .summary-item { background: rgba(255,255,255,0.02); padding: 12px; border-radius: 12px; }
-                    .summary-item .label { font-size: 0.65rem; color: #4a6a7e; text-transform: uppercase; letter-spacing: 0.3px; }
-                    .summary-item .value { font-size: 1.1rem; font-weight: 500; color: #c8dce8; }
-                    .footnote { color: #4a6a7e; text-align: center; margin-top: 20px; font-size: 0.7rem; }
-                    .separator { border-top: 1px solid rgba(255,255,255,0.04); margin: 30px 0; }
-                </style>
-                </head>
-                <body>
-                <div class="container">
-                    <h1>◈ StockBridge — Portfolio ${pageNum}</h1>
-                    <p style="color:#5a7d92;">Generated: ${new Date().toLocaleString()}</p>
-                    
-                    <h2>Portfolio Stocks</h2>
-                    <table>
-                        <thead><tr>
-                            <th>Stock</th><th>Invest (₹)</th><th>Buy Price ($)</th><th>Buy Rate</th>
-                            <th>Sell Price ($)</th><th>Sell Rate</th><th>Tax %</th>
-                            <th>Shares</th><th>Sale (₹)</th><th>Gross</th><th>Tax</th><th>Net</th>
-                        </tr></thead>
-                        <tbody>`;
-                
-                data.stocks.forEach(item => {
+                const pageNames = ['Portfolio 1', 'Portfolio 2', 'Portfolio 3', 'Portfolio 4'];
+                const { jsPDF } = window.jspdf;
+
+                const doc = new jsPDF('p', 'mm', 'a4');
+                const pageWidth = 210;
+                const margin = 14;
+                let yPos = 20;
+
+                // Helper to add section header
+                function addSectionHeader(text, y) {
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(138, 180, 208);
+                    doc.text(text, margin, y);
+                    return y + 8;
+                }
+
+                // ---- TITLE ----
+                doc.setFontSize(18);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(200, 220, 235);
+                doc.text(`◈ StockBridge — ${pageNames[pageNum - 1]}`, margin, yPos);
+                yPos += 10;
+
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(90, 125, 146);
+                doc.text(`Generated: ${new Date().toLocaleString()}`, margin, yPos);
+                yPos += 12;
+
+                // ---- PORTFOLIO TABLE ----
+                yPos = addSectionHeader('📋 Portfolio Stocks', yPos);
+
+                const portfolioHeaders = ['Stock', 'Invest (₹)', 'Buy $', 'Buy Rate', 'Sell $', 'Sell Rate', 'Tax %',
+                    'Buy Date', 'Sell Date', 'Shares', 'Sale (₹)', 'Gross', 'Tax', 'Net', 'Days', 'CAGR'
+                ];
+                const portfolioRows = data.stocks.map(item => {
                     const bd = computeStockBreakdown(item);
-                    html += `<tr>
-                        <td><strong>${item.name}</strong></td>
-                        <td>${formatINR(item.invest)}</td>
-                        <td>$${item.buyPrice}</td>
-                        <td>₹${item.buyRate}</td>
-                        <td>$${item.sellPrice}</td>
-                        <td>₹${item.sellRate}</td>
-                        <td>${item.tax}%</td>
-                        <td>${formatNumber(bd.shares, 4)}</td>
-                        <td>${formatINR(bd.saleINR)}</td>
-                        <td class="${bd.gross >= 0 ? 'profit' : 'loss'}">${(bd.gross >= 0 ? '+' : '') + formatINR(bd.gross)}</td>
-                        <td>${bd.tax > 0 ? `-${formatINR(bd.tax)}` : '₹0'}</td>
-                        <td class="${bd.net >= 0 ? 'profit' : 'loss'}">${(bd.net >= 0 ? '+' : '') + formatINR(bd.net)}</td>
-                    </tr>`;
+                    return [
+                        item.name,
+                        formatINR(item.invest),
+                        item.buyPrice.toFixed(2),
+                        item.buyRate.toFixed(2),
+                        item.sellPrice.toFixed(2),
+                        item.sellRate.toFixed(2),
+                        item.tax.toFixed(2) + '%',
+                        item.buyDate || '—',
+                        item.sellDate || '—',
+                        formatNumber(bd.shares, 4),
+                        formatINR(bd.saleINR),
+                        (bd.gross >= 0 ? '+' : '') + formatINR(bd.gross),
+                        bd.tax > 0 ? `-${formatINR(bd.tax)}` : '₹0',
+                        (bd.net >= 0 ? '+' : '') + formatINR(bd.net),
+                        bd.holdingDays || 0,
+                        bd.cagr !== null ? formatPercent(bd.cagr) : '—'
+                    ];
                 });
-                
-                html += `</tbody></table>`;
-                
-                let totalInvest = 0, totalShares = 0, totalSale = 0, totalGross = 0, totalTax = 0;
+
+                doc.autoTable({
+                    head: [portfolioHeaders],
+                    body: portfolioRows,
+                    startY: yPos + 2,
+                    margin: { left: margin, right: margin },
+                    theme: 'dark',
+                    styles: {
+                        fontSize: 6.5,
+                        textColor: [200, 220, 235],
+                        lineColor: [40, 60, 80],
+                        lineWidth: 0.5,
+                        cellPadding: 2,
+                        valign: 'middle',
+                        halign: 'center',
+                    },
+                    headStyles: {
+                        fillColor: [30, 50, 70],
+                        textColor: [138, 180, 208],
+                        fontSize: 6.5,
+                        fontStyle: 'bold',
+                        halign: 'center',
+                    },
+                    bodyStyles: {
+                        fillColor: [20, 35, 50],
+                        halign: 'center',
+                    },
+                    alternateRowStyles: {
+                        fillColor: [25, 40, 55],
+                    },
+                    columnStyles: {
+                        0: { halign: 'left', cellWidth: 14 },
+                        1: { cellWidth: 14 },
+                        2: { cellWidth: 10 },
+                        3: { cellWidth: 12 },
+                        4: { cellWidth: 10 },
+                        5: { cellWidth: 12 },
+                        6: { cellWidth: 9 },
+                        7: { cellWidth: 16 },
+                        8: { cellWidth: 16 },
+                        9: { cellWidth: 16 },
+                        10: { cellWidth: 14 },
+                        11: { cellWidth: 14 },
+                        12: { cellWidth: 12 },
+                        13: { cellWidth: 14 },
+                        14: { cellWidth: 12 },
+                        15: { cellWidth: 14 },
+                    },
+                    didDrawPage: function(data) {
+                        doc.setFontSize(7);
+                        doc.setTextColor(60, 80, 100);
+                        doc.text(`Page ${data.pageNumber}`, pageWidth - margin - 20, 280);
+                    }
+                });
+
+                yPos = doc.lastAutoTable.finalY + 6;
+
+                // ---- PORTFOLIO SUMMARY ----
+                let totalInvest = 0,
+                    totalShares = 0,
+                    totalSale = 0,
+                    totalGross = 0,
+                    totalTax = 0;
                 data.stocks.forEach(item => {
                     const bd = computeStockBreakdown(item);
                     if (bd.valid) {
@@ -1343,49 +1579,155 @@
                     }
                 });
                 const totalNet = totalGross - totalTax;
-                
-                html += `
-                    <div class="summary">
-                        <h3 style="color:#8ab4d0; font-weight:400;">Portfolio Summary</h3>
-                        <div class="summary-grid">
-                            <div class="summary-item"><div class="label">Total Invested</div><div class="value">${formatINR(totalInvest)}</div></div>
-                            <div class="summary-item"><div class="label">Total Shares</div><div class="value">${formatNumber(totalShares, 4)}</div></div>
-                            <div class="summary-item"><div class="label">Total Sale</div><div class="value">${formatINR(totalSale)}</div></div>
-                            <div class="summary-item"><div class="label">Gross P&L</div><div class="value ${totalGross >= 0 ? 'profit' : 'loss'}">${(totalGross >= 0 ? '+' : '') + formatINR(totalGross)}</div></div>
-                            <div class="summary-item"><div class="label">Total Tax</div><div class="value">${totalTax > 0 ? `-${formatINR(totalTax)}` : '₹0'}</div></div>
-                            <div class="summary-item"><div class="label" style="color:#8ab4d0;">Net P&L</div><div class="value ${totalNet >= 0 ? 'profit' : 'loss'}" style="font-size:1.3rem;">${(totalNet >= 0 ? '+' : '') + formatINR(totalNet)}</div></div>
-                        </div>
-                    </div>`;
 
-                // Comparison Scenarios section
+                if (yPos > 250) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+
+                yPos = addSectionHeader('📊 Portfolio Summary', yPos + 2);
+
+                const summaryData = [
+                    ['Total Invested', formatINR(totalInvest)],
+                    ['Total Shares', formatNumber(totalShares, 4)],
+                    ['Total Sale', formatINR(totalSale)],
+                    ['Gross P&L', (totalGross >= 0 ? '+' : '') + formatINR(totalGross)],
+                    ['Total Tax', totalTax > 0 ? `-${formatINR(totalTax)}` : '₹0'],
+                    ['Net P&L', (totalNet >= 0 ? '+' : '') + formatINR(totalNet)]
+                ];
+
+                doc.autoTable({
+                    body: summaryData,
+                    startY: yPos + 2,
+                    margin: { left: margin + 10, right: margin + 10 },
+                    theme: 'plain',
+                    styles: {
+                        fontSize: 9,
+                        textColor: [200, 220, 235],
+                        cellPadding: 3,
+                        valign: 'middle',
+                    },
+                    bodyStyles: {
+                        fillColor: [20, 35, 50],
+                    },
+                    alternateRowStyles: {
+                        fillColor: [25, 40, 55],
+                    },
+                    columnStyles: {
+                        0: { cellWidth: 50, halign: 'left', fontStyle: 'bold', textColor: [138, 180, 208] },
+                        1: { cellWidth: 40, halign: 'right' },
+                    },
+                    didDrawCell: function(data) {
+                        if (data.column.index === 1 && data.row.index === 5) {
+                            const isProfit = data.cell.raw.includes('+');
+                            doc.setTextColor(isProfit ? [106, 154, 138] : [154, 106, 106]);
+                            doc.text(data.cell.raw, data.cell.x + data.cell.width - 3, data.cell.y + data
+                            .cell.height / 2 + 1.5, { align: 'right' });
+                            return true;
+                        }
+                    }
+                });
+
+                yPos = doc.lastAutoTable.finalY + 8;
+
+                // ---- COMPARISON SCENARIOS ----
                 const scenarios = data.comparisonScenarios || [];
                 if (scenarios.length > 0) {
-                    html += `<div class="separator"></div><h2>Comparison Scenarios (Independent)</h2><table>
-                        <thead><tr>
-                            <th>Scenario</th><th>Invest (₹)</th><th>Buy Price ($)</th><th>Buy Rate</th>
-                            <th>Sell Price ($)</th><th>Sell Rate</th><th>Tax %</th>
-                            <th>Shares</th><th>Sale (₹)</th><th>Gross</th><th>Tax</th><th>Net</th>
-                        </tr></thead><tbody>`;
-                    
-                    scenarios.forEach(item => {
+                    if (yPos > 240) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+
+                    yPos = addSectionHeader('📊 Comparison Scenarios', yPos + 2);
+
+                    const scenarioHeaders = ['Scenario', 'Invest (₹)', 'Buy $', 'Buy Rate', 'Sell $', 'Sell Rate',
+                        'Tax %', 'Buy Date', 'Sell Date', 'Shares', 'Sale (₹)', 'Gross', 'Tax', 'Net', 'Days',
+                        'CAGR'
+                    ];
+                    const scenarioRows = scenarios.map(item => {
                         const bd = computeStockBreakdown(item);
-                        html += `<tr>
-                            <td><strong>${item.name}</strong></td>
-                            <td>${formatINR(item.invest)}</td>
-                            <td>$${item.buyPrice}</td>
-                            <td>₹${item.buyRate}</td>
-                            <td>$${item.sellPrice}</td>
-                            <td>₹${item.sellRate}</td>
-                            <td>${item.tax}%</td>
-                            <td>${formatNumber(bd.shares, 4)}</td>
-                            <td>${formatINR(bd.saleINR)}</td>
-                            <td class="${bd.gross >= 0 ? 'profit' : 'loss'}">${(bd.gross >= 0 ? '+' : '') + formatINR(bd.gross)}</td>
-                            <td>${bd.tax > 0 ? `-${formatINR(bd.tax)}` : '₹0'}</td>
-                            <td class="${bd.net >= 0 ? 'profit' : 'loss'}">${(bd.net >= 0 ? '+' : '') + formatINR(bd.net)}</td>
-                        </tr>`;
+                        return [
+                            item.name,
+                            formatINR(item.invest),
+                            item.buyPrice.toFixed(2),
+                            item.buyRate.toFixed(2),
+                            item.sellPrice.toFixed(2),
+                            item.sellRate.toFixed(2),
+                            item.tax.toFixed(2) + '%',
+                            item.buyDate || '—',
+                            item.sellDate || '—',
+                            formatNumber(bd.shares, 4),
+                            formatINR(bd.saleINR),
+                            (bd.gross >= 0 ? '+' : '') + formatINR(bd.gross),
+                            bd.tax > 0 ? `-${formatINR(bd.tax)}` : '₹0',
+                            (bd.net >= 0 ? '+' : '') + formatINR(bd.net),
+                            bd.holdingDays || 0,
+                            bd.cagr !== null ? formatPercent(bd.cagr) : '—'
+                        ];
                     });
-                    
-                    let compTotalInvest = 0, compTotalShares = 0, compTotalSale = 0, compTotalGross = 0, compTotalTax = 0;
+
+                    doc.autoTable({
+                        head: [scenarioHeaders],
+                        body: scenarioRows,
+                        startY: yPos + 2,
+                        margin: { left: margin, right: margin },
+                        theme: 'dark',
+                        styles: {
+                            fontSize: 6.5,
+                            textColor: [200, 220, 235],
+                            lineColor: [40, 60, 80],
+                            lineWidth: 0.5,
+                            cellPadding: 2,
+                            valign: 'middle',
+                            halign: 'center',
+                        },
+                        headStyles: {
+                            fillColor: [30, 50, 70],
+                            textColor: [138, 180, 208],
+                            fontSize: 6.5,
+                            fontStyle: 'bold',
+                            halign: 'center',
+                        },
+                        bodyStyles: {
+                            fillColor: [20, 35, 50],
+                            halign: 'center',
+                        },
+                        alternateRowStyles: {
+                            fillColor: [25, 40, 55],
+                        },
+                        columnStyles: {
+                            0: { halign: 'left', cellWidth: 14 },
+                            1: { cellWidth: 14 },
+                            2: { cellWidth: 10 },
+                            3: { cellWidth: 12 },
+                            4: { cellWidth: 10 },
+                            5: { cellWidth: 12 },
+                            6: { cellWidth: 9 },
+                            7: { cellWidth: 16 },
+                            8: { cellWidth: 16 },
+                            9: { cellWidth: 16 },
+                            10: { cellWidth: 14 },
+                            11: { cellWidth: 14 },
+                            12: { cellWidth: 12 },
+                            13: { cellWidth: 14 },
+                            14: { cellWidth: 12 },
+                            15: { cellWidth: 14 },
+                        },
+                        didDrawPage: function(data) {
+                            doc.setFontSize(7);
+                            doc.setTextColor(60, 80, 100);
+                            doc.text(`Page ${data.pageNumber}`, pageWidth - margin - 20, 280);
+                        }
+                    });
+
+                    yPos = doc.lastAutoTable.finalY + 6;
+
+                    // ---- SCENARIOS SUMMARY ----
+                    let compTotalInvest = 0,
+                        compTotalShares = 0,
+                        compTotalSale = 0,
+                        compTotalGross = 0,
+                        compTotalTax = 0;
                     scenarios.forEach(item => {
                         const bd = computeStockBreakdown(item);
                         if (bd.valid) {
@@ -1397,42 +1739,103 @@
                         }
                     });
                     const compTotalNet = compTotalGross - compTotalTax;
-                    
-                    html += `</tbody></table>
-                    <div class="summary">
-                        <h3 style="color:#8ab4d0; font-weight:400;">Scenarios Summary</h3>
-                        <div class="summary-grid">
-                            <div class="summary-item"><div class="label">Total Invested</div><div class="value">${formatINR(compTotalInvest)}</div></div>
-                            <div class="summary-item"><div class="label">Total Shares</div><div class="value">${formatNumber(compTotalShares, 4)}</div></div>
-                            <div class="summary-item"><div class="label">Total Sale</div><div class="value">${formatINR(compTotalSale)}</div></div>
-                            <div class="summary-item"><div class="label">Gross P&L</div><div class="value ${compTotalGross >= 0 ? 'profit' : 'loss'}">${(compTotalGross >= 0 ? '+' : '') + formatINR(compTotalGross)}</div></div>
-                            <div class="summary-item"><div class="label">Total Tax</div><div class="value">${compTotalTax > 0 ? `-${formatINR(compTotalTax)}` : '₹0'}</div></div>
-                            <div class="summary-item"><div class="label" style="color:#8ab4d0;">Net P&L</div><div class="value ${compTotalNet >= 0 ? 'profit' : 'loss'}" style="font-size:1.3rem;">${(compTotalNet >= 0 ? '+' : '') + formatINR(compTotalNet)}</div></div>
-                        </div>
-                    </div>`;
+
+                    if (yPos > 240) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+
+                    yPos = addSectionHeader('📊 Scenarios Summary', yPos + 2);
+
+                    const scenarioSummaryData = [
+                        ['Total Invested', formatINR(compTotalInvest)],
+                        ['Total Shares', formatNumber(compTotalShares, 4)],
+                        ['Total Sale', formatINR(compTotalSale)],
+                        ['Gross P&L', (compTotalGross >= 0 ? '+' : '') + formatINR(compTotalGross)],
+                        ['Total Tax', compTotalTax > 0 ? `-${formatINR(compTotalTax)}` : '₹0'],
+                        ['Net P&L', (compTotalNet >= 0 ? '+' : '') + formatINR(compTotalNet)]
+                    ];
+
+                    doc.autoTable({
+                        body: scenarioSummaryData,
+                        startY: yPos + 2,
+                        margin: { left: margin + 10, right: margin + 10 },
+                        theme: 'plain',
+                        styles: {
+                            fontSize: 9,
+                            textColor: [200, 220, 235],
+                            cellPadding: 3,
+                            valign: 'middle',
+                        },
+                        bodyStyles: {
+                            fillColor: [20, 35, 50],
+                        },
+                        alternateRowStyles: {
+                            fillColor: [25, 40, 55],
+                        },
+                        columnStyles: {
+                            0: { cellWidth: 50, halign: 'left', fontStyle: 'bold', textColor: [138, 180,
+                                208] },
+                            1: { cellWidth: 40, halign: 'right' },
+                        },
+                        didDrawCell: function(data) {
+                            if (data.column.index === 1 && data.row.index === 5) {
+                                const isProfit = data.cell.raw.includes('+');
+                                doc.setTextColor(isProfit ? [106, 154, 138] : [154, 106, 106]);
+                                doc.text(data.cell.raw, data.cell.x + data.cell.width - 3, data.cell.y + data
+                                    .cell.height / 2 + 1.5, { align: 'right' });
+                                return true;
+                            }
+                        }
+                    });
                 }
 
-                html += `
-                    <div class="footnote">Portfolio and Scenario totals are independent · Each scenario is a separate stock · Tax applied on positive gross P&L</div>
-                </div>
-                </body>
-                </html>`;
+                // ---- FOOTER ----
+                doc.setFontSize(7);
+                doc.setFont('helvetica', 'italic');
+                doc.setTextColor(60, 80, 100);
+                const footerText = 'Portfolio and Scenario totals are independent · Each scenario is a separate stock · Tax applied on positive gross P&L · CAGR calculated from buy/sell dates';
+                const footerX = (pageWidth - doc.getTextWidth(footerText)) / 2;
+                doc.text(footerText, footerX, 285);
 
-                const blob = new Blob([html], { type: 'text/html' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `StockBridge_Portfolio${pageNum}_${new Date().toISOString().slice(0,10)}.html`;
-                a.click();
-                URL.revokeObjectURL(url);
-                showToast('✓', `Portfolio ${pageNum} downloaded`);
+                // Save the PDF
+                const fileName = `StockBridge_${pageNames[pageNum - 1]}_${new Date().toISOString().slice(0, 10)}.pdf`;
+                doc.save(fileName);
+                showToast('✓', `PDF downloaded: ${pageNames[pageNum - 1]}`);
             }
 
-            function downloadAllPages() {
-                for (let i = 1; i <= totalPages; i++) {
-                    setTimeout(() => downloadPage(i), i * 300);
-                }
-                showToast('📦', 'Downloading all 4 portfolios...');
+            // ----- DOWNLOAD FUNCTIONS -----
+            function downloadPDF(pageNum) {
+                const loadingEl = document.getElementById('pdfLoading');
+                const textEl = document.getElementById('downloadText');
+                loadingEl.classList.add('show');
+                textEl.textContent = ' Generating...';
+
+                setTimeout(() => {
+                    generatePDF(pageNum);
+                    loadingEl.classList.remove('show');
+                    textEl.textContent = '📄 Download PDF';
+                }, 100);
+            }
+
+            function downloadAllPDFs() {
+                const loadingEl = document.getElementById('pdfLoadingAll');
+                const textEl = document.getElementById('downloadAllText');
+                loadingEl.classList.add('show');
+                textEl.textContent = ' Generating...';
+
+                setTimeout(() => {
+                    for (let i = 1; i <= totalPages; i++) {
+                        setTimeout(() => {
+                            generatePDF(i, true);
+                            if (i === totalPages) {
+                                loadingEl.classList.remove('show');
+                                textEl.textContent = '📄 All PDFs';
+                                showToast('📦', 'All 4 PDFs downloaded!');
+                            }
+                        }, i * 500);
+                    }
+                }, 100);
             }
 
             document.querySelectorAll('.nav-links button').forEach(btn => {
@@ -1442,11 +1845,11 @@
             });
 
             document.getElementById('downloadBtn').addEventListener('click', function() {
-                downloadPage(currentPage);
+                downloadPDF(currentPage);
             });
 
             document.getElementById('downloadAllBtn').addEventListener('click', function() {
-                downloadAllPages();
+                downloadAllPDFs();
             });
 
             renderPage(1);

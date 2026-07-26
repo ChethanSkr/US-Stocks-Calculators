@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StockBridge · Multi-Page</title>
+    <title>StockBridge · Independent Scenarios</title>
     <style>
         * {
             box-sizing: border-box;
@@ -23,7 +23,6 @@
             justify-content: center;
             align-items: flex-start;
         }
-        /* Subtle decorative elements - very subtle */
         body::before {
             content: "";
             position: fixed;
@@ -50,7 +49,6 @@
             position: relative;
             z-index: 1;
         }
-        /* Navigation */
         .nav-bar {
             display: flex;
             flex-wrap: wrap;
@@ -465,7 +463,7 @@
             font-weight: 400;
         }
 
-        /* Comparison section - matches portfolio styles */
+        /* Comparison section - independent scenarios */
         .comparison-section {
             background: transparent;
             border-radius: 0;
@@ -492,16 +490,11 @@
         }
         .comparison-item .comp-header {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
             margin-bottom: 8px;
             padding-bottom: 6px;
             border-bottom: 1px solid rgba(255,255,255,0.03);
-        }
-        .comparison-item .comp-name {
-            font-weight: 500;
-            font-size: 0.9rem;
-            color: #c8dce8;
         }
         .comparison-item .comp-remove {
             background: rgba(255,255,255,0.02);
@@ -778,14 +771,14 @@
             <span>Multi‑Stock <span class="gold">Portfolio</span></span>
             <span class="badge" id="pageBadge">Page 1</span>
         </h1>
-        <div class="subhead" id="pageSubhead">Portfolio · Comparison · Real‑time P&L</div>
+        <div class="subhead" id="pageSubhead">Portfolio · Independent Scenarios · Separate Calculations</div>
 
         <div id="pageContent"></div>
 
         <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 16px;">
-            <span class="tax-tag">tax on positive P&L only</span>
-            <span class="tax-tag">FX spread included</span>
-            <span class="tax-tag">comparison syncs with portfolio</span>
+            <span class="tax-tag">Portfolio & Scenario totals are independent</span>
+            <span class="tax-tag">Each scenario is a separate stock</span>
+            <span class="tax-tag">Tax on positive P&L only</span>
         </div>
         <div class="footnote">Stock · Invest ₹ · Buy/Sell price ($) · Buy/Sell rate (₹/$) · Tax & charges %</div>
     </div>
@@ -802,7 +795,7 @@
                         { name: 'MSFT', invest: 50000, buyPrice: 320.00, buyRate: 83.50, sellPrice: 345.00, sellRate: 84.20, tax: 0.40 },
                         { name: 'GOOGL', invest: 75000, buyPrice: 85.25, buyRate: 82.90, sellPrice: 79.50, sellRate: 84.00, tax: 0.60 }
                     ],
-                    extraComparisons: []
+                    comparisonScenarios: []
                 },
                 2: {
                     stocks: [
@@ -810,7 +803,7 @@
                         { name: 'AMZN', invest: 80000, buyPrice: 180.50, buyRate: 83.30, sellPrice: 195.00, sellRate: 84.10, tax: 0.45 },
                         { name: 'NVDA', invest: 90000, buyPrice: 450.00, buyRate: 83.40, sellPrice: 520.00, sellRate: 84.30, tax: 0.50 }
                     ],
-                    extraComparisons: []
+                    comparisonScenarios: []
                 },
                 3: {
                     stocks: [
@@ -818,7 +811,7 @@
                         { name: 'NFLX', invest: 60000, buyPrice: 380.00, buyRate: 83.25, sellPrice: 410.00, sellRate: 84.15, tax: 0.52 },
                         { name: 'AMD', invest: 55000, buyPrice: 120.00, buyRate: 83.00, sellPrice: 135.00, sellRate: 84.00, tax: 0.42 }
                     ],
-                    extraComparisons: []
+                    comparisonScenarios: []
                 },
                 4: {
                     stocks: [
@@ -826,7 +819,7 @@
                         { name: 'IBM', invest: 65000, buyPrice: 140.00, buyRate: 83.20, sellPrice: 155.00, sellRate: 84.30, tax: 0.44 },
                         { name: 'ORCL', invest: 85000, buyPrice: 110.00, buyRate: 83.15, sellPrice: 125.00, sellRate: 84.20, tax: 0.46 }
                     ],
-                    extraComparisons: []
+                    comparisonScenarios: []
                 }
             };
 
@@ -877,7 +870,7 @@
                 });
                 document.getElementById('pageIndicator').textContent = `Page ${pageNum} of ${totalPages}`;
                 document.getElementById('pageBadge').textContent = `Page ${pageNum}`;
-                document.getElementById('pageSubhead').textContent = `Portfolio ${pageNum} · Comparison · Real‑time P&L`;
+                document.getElementById('pageSubhead').textContent = `Portfolio ${pageNum} · Independent Scenarios · Separate Calculations`;
 
                 let html = `
                     <div class="main-grid">
@@ -954,36 +947,30 @@
 
                         <div>
                             <div class="section-header" style="border-left-color: rgba(100, 180, 255, 0.12);">
-                                <h2>📊 Comparison</h2>
-                                <span>scenarios</span>
+                                <h2>📊 Comparison Scenarios</h2>
+                                <span>independent stocks</span>
                             </div>
                             <div class="comparison-list-wrapper" id="comparisonList_${pageNum}">
                 `;
 
-                let allCompItems = [];
-                data.stocks.forEach((item, idx) => {
-                    allCompItems.push({ ...item, _isPortfolio: true, _portfolioIndex: idx });
-                });
-                data.extraComparisons.forEach((item, idx) => {
-                    allCompItems.push({ ...item, _isPortfolio: false, _extraIndex: idx });
-                });
+                // Only show comparison scenarios (independent stocks)
+                const scenarios = data.comparisonScenarios || [];
 
-                if (allCompItems.length === 0) {
-                    html += `<div class="comparison-empty"><span>◈</span>No stocks. Add to portfolio.</div>`;
+                if (scenarios.length === 0) {
+                    html += `<div class="comparison-empty"><span>◈</span>No comparison scenarios.<br>Click "Add Scenario" to create your first independent scenario stock.</div>`;
                 } else {
-                    allCompItems.forEach((item, index) => {
+                    scenarios.forEach((item, index) => {
                         const bd = computeStockBreakdown(item);
                         const name = item.name || 'Unnamed';
-                        const isPortfolio = item._isPortfolio;
 
                         const compFields = [
-                            { key: 'name', label: 'Stock', cur: '◈', type: 'text' },
-                            { key: 'invest', label: 'Invest ₹', cur: '₹', type: 'number' },
-                            { key: 'buyPrice', label: 'Buy $', cur: '$', type: 'number' },
-                            { key: 'buyRate', label: 'Buy ₹/$', cur: '₹/$', type: 'number' },
-                            { key: 'sellPrice', label: 'Sell $', cur: '$', type: 'number' },
-                            { key: 'sellRate', label: 'Sell ₹/$', cur: '₹/$', type: 'number' },
-                            { key: 'tax', label: 'Tax %', cur: '%', type: 'number' }
+                            { label: 'Stock', key: 'name', placeholder: 'e.g. AAPL', cur: '◈', type: 'text' },
+                            { label: 'Invest ₹', key: 'invest', placeholder: '100000', step: '1000', cur: '₹', type: 'number' },
+                            { label: 'Buy $', key: 'buyPrice', placeholder: '150.00', step: '0.01', cur: '$', type: 'number' },
+                            { label: 'Buy ₹/$', key: 'buyRate', placeholder: '83.00', step: '0.01', cur: '₹/$', type: 'number' },
+                            { label: 'Sell $', key: 'sellPrice', placeholder: '165.00', step: '0.01', cur: '$', type: 'number' },
+                            { label: 'Sell ₹/$', key: 'sellRate', placeholder: '84.00', step: '0.01', cur: '₹/$', type: 'number' },
+                            { label: 'Tax %', key: 'tax', placeholder: '0.50', step: '0.05', cur: '%', type: 'number' }
                         ];
 
                         let fieldsHtml = '';
@@ -992,36 +979,23 @@
                             const inputType = f.type || 'number';
                             const stepAttr = (f.key === 'invest') ? 'step="1000"' :
                                             (f.key === 'tax') ? 'step="0.05"' : 'step="0.01"';
-                            const placeholder = (f.key === 'name') ? 'e.g. AAPL' :
-                                              (f.key === 'invest') ? '100000' : '0.00';
-                            
-                            const dataAttrs = isPortfolio ? 
-                                `data-comp-type="portfolio" data-page="${pageNum}" data-portfolio-index="${item._portfolioIndex}"` :
-                                `data-comp-type="extra" data-page="${pageNum}" data-extra-index="${item._extraIndex}"`;
+                            const placeholder = f.placeholder || '';
                             
                             fieldsHtml += `
                                 <div class="comp-field">
                                     <span class="comp-label">${f.label}</span>
                                     <div class="comp-input">
                                         <span class="currency">${f.cur}</span>
-                                        <input type="${inputType}" class="comp-input-field" ${dataAttrs} data-key="${f.key}" value="${val}" ${stepAttr} placeholder="${placeholder}">
+                                        <input type="${inputType}" class="comp-input-field" data-page="${pageNum}" data-index="${index}" data-key="${f.key}" value="${val}" ${stepAttr} placeholder="${placeholder}">
                                     </div>
                                 </div>
                             `;
                         });
 
-                        const badgeHtml = isPortfolio ? 
-                            `<span class="comp-portfolio-badge">◈ portfolio</span>` :
-                            `<span class="comp-scenario-badge">◇ extra</span>`;
-
-                        const removeHtml = isPortfolio ? '' : 
-                            `<button class="comp-remove" data-page="${pageNum}" data-extra-index="${item._extraIndex}">✕</button>`;
-
                         html += `
                             <div class="comparison-item">
                                 <div class="comp-header">
-                                    <span class="comp-name">${name}</span>
-                                    <div>${badgeHtml} ${removeHtml}</div>
+                                    <button class="comp-remove" data-page="${pageNum}" data-index="${index}">✕</button>
                                 </div>
                                 <div class="comparison-grid">${fieldsHtml}</div>
                                 <div class="comp-result-row">
@@ -1039,7 +1013,7 @@
                 html += `
                             </div>
                             <div class="action-row" style="margin: 4px 0 12px;">
-                                <button class="add-comp-btn" data-page="${pageNum}">+ Add scenario</button>
+                                <button class="add-comp-btn" data-page="${pageNum}">+ Add Scenario</button>
                             </div>
                             <div class="comparison-result-panel" id="comparisonResultPanel_${pageNum}">
                                 <div class="result-item"><span class="label">Total Invested</span><span class="number" id="compTotalInvested_${pageNum}">₹0</span></div>
@@ -1048,7 +1022,7 @@
                                 <div class="result-item"><span class="label">Gross P&L</span><span class="number" id="compGrossPnl_${pageNum}">₹0</span></div>
                                 <div class="result-item"><span class="label">Total Tax</span><span class="number" id="compTotalTax_${pageNum}">₹0</span></div>
                                 <div class="result-item" style="grid-column: 1 / -1; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 6px; margin-top: 2px;">
-                                    <span class="label" style="font-weight: 500; color:#8ab4d0;">Net Comparison P&L</span>
+                                    <span class="label" style="font-weight: 500; color:#8ab4d0;">Net Scenarios P&L</span>
                                     <span class="number" id="compNetPnl_${pageNum}" style="font-size: 1.2rem;">₹0</span>
                                 </div>
                             </div>
@@ -1064,6 +1038,7 @@
             function attachPageEvents(pageNum) {
                 const data = pageData[pageNum];
 
+                // Portfolio stock events
                 document.querySelectorAll(`.stock-input[data-page="${pageNum}"]`).forEach(input => {
                     input.addEventListener('input', function() {
                         const index = parseInt(this.dataset.index);
@@ -1133,7 +1108,7 @@
                         ]
                     };
                     data.stocks = defaults[pageNum] || defaults[1];
-                    data.extraComparisons = [];
+                    data.comparisonScenarios = [];
                     renderPage(pageNum);
                 });
 
@@ -1142,66 +1117,55 @@
                     showToast('✓', 'Calculated');
                 });
 
+                // Comparison scenario events - ADD INDEPENDENT SCENARIO
                 document.querySelector(`.add-comp-btn[data-page="${pageNum}"]`)?.addEventListener('click', function() {
-                    const template = data.stocks.length > 0 ? data.stocks[0] : { name: 'AAPL', invest: 100000, buyPrice: 150.50, buyRate: 83.20, sellPrice: 165.80, sellRate: 84.50, tax: 0.50 };
-                    const newComp = createStockData(
-                        template.name || 'AAPL',
-                        (template.invest || 100000) * 1.1,
-                        (template.buyPrice || 150) * 1.05,
-                        (template.buyRate || 83) * 1.01,
-                        (template.sellPrice || 165) * 1.08,
-                        (template.sellRate || 84) * 1.01,
-                        (template.tax || 0.5) * 1.2
+                    // Create a completely independent scenario with default values
+                    const newScenario = createStockData(
+                        `Scenario ${(data.comparisonScenarios || []).length + 1}`,
+                        100000,
+                        150.00,
+                        83.00,
+                        160.00,
+                        84.00,
+                        0.50
                     );
-                    newComp.name = `${template.name || 'STK'} (extra ${data.extraComparisons.length + 1})`;
-                    data.extraComparisons.push(newComp);
+                    if (!data.comparisonScenarios) data.comparisonScenarios = [];
+                    data.comparisonScenarios.push(newScenario);
                     renderPage(pageNum);
+                    showToast('✓', 'New scenario added');
                 });
 
+                // Remove scenario
                 document.querySelectorAll(`.comp-remove[data-page="${pageNum}"]`).forEach(btn => {
                     btn.addEventListener('click', function() {
-                        const idx = parseInt(this.dataset.extraIndex);
-                        data.extraComparisons.splice(idx, 1);
-                        renderPage(pageNum);
+                        const idx = parseInt(this.dataset.index);
+                        if (data.comparisonScenarios && data.comparisonScenarios.length > 0) {
+                            data.comparisonScenarios.splice(idx, 1);
+                            renderPage(pageNum);
+                            showToast('✓', 'Scenario removed');
+                        }
                     });
                 });
 
+                // Scenario input events
                 document.querySelectorAll(`.comp-input-field[data-page="${pageNum}"]`).forEach(input => {
                     input.addEventListener('input', function() {
-                        const type = this.dataset.compType;
+                        const idx = parseInt(this.dataset.index);
                         const key = this.dataset.key;
                         let val = this.value;
-
-                        if (type === 'portfolio') {
-                            const idx = parseInt(this.dataset.portfolioIndex);
-                            if (idx >= 0 && idx < data.stocks.length) {
-                                if (key === 'name') {
-                                    data.stocks[idx][key] = val;
-                                } else {
-                                    const numVal = parseFloat(val);
-                                    if (!isNaN(numVal) && numVal >= 0) {
-                                        data.stocks[idx][key] = numVal;
-                                    } else if (val === '') {
-                                        data.stocks[idx][key] = 0;
-                                    }
+                        
+                        if (data.comparisonScenarios && idx >= 0 && idx < data.comparisonScenarios.length) {
+                            if (key === 'name') {
+                                data.comparisonScenarios[idx][key] = val;
+                            } else {
+                                const numVal = parseFloat(val);
+                                if (!isNaN(numVal) && numVal >= 0) {
+                                    data.comparisonScenarios[idx][key] = numVal;
+                                } else if (val === '') {
+                                    data.comparisonScenarios[idx][key] = 0;
                                 }
-                                renderPage(pageNum);
                             }
-                        } else if (type === 'extra') {
-                            const idx = parseInt(this.dataset.extraIndex);
-                            if (idx >= 0 && idx < data.extraComparisons.length) {
-                                if (key === 'name') {
-                                    data.extraComparisons[idx][key] = val;
-                                } else {
-                                    const numVal = parseFloat(val);
-                                    if (!isNaN(numVal) && numVal >= 0) {
-                                        data.extraComparisons[idx][key] = numVal;
-                                    } else if (val === '') {
-                                        data.extraComparisons[idx][key] = 0;
-                                    }
-                                }
-                                renderPage(pageNum);
-                            }
+                            computePageTotals(pageNum);
                         }
                     });
                 });
@@ -1209,6 +1173,8 @@
 
             function computePageTotals(pageNum) {
                 const data = pageData[pageNum];
+                
+                // ---- PORTFOLIO TOTALS ----
                 let totalInvest = 0, totalShares = 0, totalSaleINR = 0, totalGross = 0, totalTax = 0;
 
                 data.stocks.forEach((item, idx) => {
@@ -1264,17 +1230,11 @@
                 netEl.textContent = (netPnl >= 0 ? '+' : '') + formatINR(netPnl);
                 netEl.className = 'number' + (netPnl > 0 ? ' highlight-profit' : netPnl < 0 ? ' highlight-loss' : '');
 
-                // Comparison totals
+                // ---- COMPARISON SCENARIOS TOTALS (independent scenarios) ----
                 let compTotalInvest = 0, compTotalShares = 0, compTotalSale = 0, compTotalGross = 0, compTotalTax = 0;
-                let allItems = [];
-                data.stocks.forEach((item, idx) => {
-                    allItems.push({ ...item, _isPortfolio: true });
-                });
-                data.extraComparisons.forEach((item, idx) => {
-                    allItems.push({ ...item, _isPortfolio: false });
-                });
+                const scenarios = data.comparisonScenarios || [];
 
-                allItems.forEach(item => {
+                scenarios.forEach(item => {
                     const bd = computeStockBreakdown(item);
                     if (bd.valid) {
                         compTotalInvest += bd.invested;
@@ -1322,6 +1282,7 @@
                     body { font-family: system-ui, sans-serif; padding: 40px; background: #0f1a24; color: #c8dce8; }
                     .container { max-width: 1200px; margin: 0 auto; background: rgba(18,30,42,0.95); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.04); }
                     h1 { color: #8ab4d0; font-weight: 400; }
+                    h2 { color: #8ab4d0; font-weight: 400; margin-top: 30px; }
                     table { width: 100%; border-collapse: collapse; margin: 20px 0; }
                     th, td { padding: 10px 12px; border: 1px solid rgba(255,255,255,0.04); text-align: left; font-size: 0.85rem; }
                     th { background: rgba(255,255,255,0.02); color: #8ab4d0; font-weight: 500; }
@@ -1333,6 +1294,7 @@
                     .summary-item .label { font-size: 0.65rem; color: #4a6a7e; text-transform: uppercase; letter-spacing: 0.3px; }
                     .summary-item .value { font-size: 1.1rem; font-weight: 500; color: #c8dce8; }
                     .footnote { color: #4a6a7e; text-align: center; margin-top: 20px; font-size: 0.7rem; }
+                    .separator { border-top: 1px solid rgba(255,255,255,0.04); margin: 30px 0; }
                 </style>
                 </head>
                 <body>
@@ -1340,7 +1302,7 @@
                     <h1>◈ StockBridge — Portfolio ${pageNum}</h1>
                     <p style="color:#5a7d92;">Generated: ${new Date().toLocaleString()}</p>
                     
-                    <h2 style="color:#8ab4d0; font-weight:400;">Portfolio Stocks</h2>
+                    <h2>Portfolio Stocks</h2>
                     <table>
                         <thead><tr>
                             <th>Stock</th><th>Invest (₹)</th><th>Buy Price ($)</th><th>Buy Rate</th>
@@ -1384,7 +1346,7 @@
                 
                 html += `
                     <div class="summary">
-                        <h3 style="color:#8ab4d0; font-weight:400;">Summary</h3>
+                        <h3 style="color:#8ab4d0; font-weight:400;">Portfolio Summary</h3>
                         <div class="summary-grid">
                             <div class="summary-item"><div class="label">Total Invested</div><div class="value">${formatINR(totalInvest)}</div></div>
                             <div class="summary-item"><div class="label">Total Shares</div><div class="value">${formatNumber(totalShares, 4)}</div></div>
@@ -1393,8 +1355,65 @@
                             <div class="summary-item"><div class="label">Total Tax</div><div class="value">${totalTax > 0 ? `-${formatINR(totalTax)}` : '₹0'}</div></div>
                             <div class="summary-item"><div class="label" style="color:#8ab4d0;">Net P&L</div><div class="value ${totalNet >= 0 ? 'profit' : 'loss'}" style="font-size:1.3rem;">${(totalNet >= 0 ? '+' : '') + formatINR(totalNet)}</div></div>
                         </div>
-                    </div>
-                    <div class="footnote">Tax applied on positive gross P&L · FX spread included</div>
+                    </div>`;
+
+                // Comparison Scenarios section
+                const scenarios = data.comparisonScenarios || [];
+                if (scenarios.length > 0) {
+                    html += `<div class="separator"></div><h2>Comparison Scenarios (Independent)</h2><table>
+                        <thead><tr>
+                            <th>Scenario</th><th>Invest (₹)</th><th>Buy Price ($)</th><th>Buy Rate</th>
+                            <th>Sell Price ($)</th><th>Sell Rate</th><th>Tax %</th>
+                            <th>Shares</th><th>Sale (₹)</th><th>Gross</th><th>Tax</th><th>Net</th>
+                        </tr></thead><tbody>`;
+                    
+                    scenarios.forEach(item => {
+                        const bd = computeStockBreakdown(item);
+                        html += `<tr>
+                            <td><strong>${item.name}</strong></td>
+                            <td>${formatINR(item.invest)}</td>
+                            <td>$${item.buyPrice}</td>
+                            <td>₹${item.buyRate}</td>
+                            <td>$${item.sellPrice}</td>
+                            <td>₹${item.sellRate}</td>
+                            <td>${item.tax}%</td>
+                            <td>${formatNumber(bd.shares, 4)}</td>
+                            <td>${formatINR(bd.saleINR)}</td>
+                            <td class="${bd.gross >= 0 ? 'profit' : 'loss'}">${(bd.gross >= 0 ? '+' : '') + formatINR(bd.gross)}</td>
+                            <td>${bd.tax > 0 ? `-${formatINR(bd.tax)}` : '₹0'}</td>
+                            <td class="${bd.net >= 0 ? 'profit' : 'loss'}">${(bd.net >= 0 ? '+' : '') + formatINR(bd.net)}</td>
+                        </tr>`;
+                    });
+                    
+                    let compTotalInvest = 0, compTotalShares = 0, compTotalSale = 0, compTotalGross = 0, compTotalTax = 0;
+                    scenarios.forEach(item => {
+                        const bd = computeStockBreakdown(item);
+                        if (bd.valid) {
+                            compTotalInvest += bd.invested;
+                            compTotalShares += bd.shares;
+                            compTotalSale += bd.saleINR;
+                            compTotalGross += bd.gross;
+                            compTotalTax += bd.tax;
+                        }
+                    });
+                    const compTotalNet = compTotalGross - compTotalTax;
+                    
+                    html += `</tbody></table>
+                    <div class="summary">
+                        <h3 style="color:#8ab4d0; font-weight:400;">Scenarios Summary</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item"><div class="label">Total Invested</div><div class="value">${formatINR(compTotalInvest)}</div></div>
+                            <div class="summary-item"><div class="label">Total Shares</div><div class="value">${formatNumber(compTotalShares, 4)}</div></div>
+                            <div class="summary-item"><div class="label">Total Sale</div><div class="value">${formatINR(compTotalSale)}</div></div>
+                            <div class="summary-item"><div class="label">Gross P&L</div><div class="value ${compTotalGross >= 0 ? 'profit' : 'loss'}">${(compTotalGross >= 0 ? '+' : '') + formatINR(compTotalGross)}</div></div>
+                            <div class="summary-item"><div class="label">Total Tax</div><div class="value">${compTotalTax > 0 ? `-${formatINR(compTotalTax)}` : '₹0'}</div></div>
+                            <div class="summary-item"><div class="label" style="color:#8ab4d0;">Net P&L</div><div class="value ${compTotalNet >= 0 ? 'profit' : 'loss'}" style="font-size:1.3rem;">${(compTotalNet >= 0 ? '+' : '') + formatINR(compTotalNet)}</div></div>
+                        </div>
+                    </div>`;
+                }
+
+                html += `
+                    <div class="footnote">Portfolio and Scenario totals are independent · Each scenario is a separate stock · Tax applied on positive gross P&L</div>
                 </div>
                 </body>
                 </html>`;
